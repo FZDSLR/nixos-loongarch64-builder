@@ -1,0 +1,27 @@
+name: Build Loongarch64 Packages
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  build-hello:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@v4
+        with:
+          extra-conf: |
+            experimental-features = nix-command flakes
+            system-features = recursive-nix
+
+      - name: Build hello package for Loongarch64
+        run: |
+          nix build .#nixosConfigurations.loongarch64.pkgs.hello \
+            --print-build-logs
