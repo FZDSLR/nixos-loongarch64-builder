@@ -4,8 +4,8 @@ self: super: {
       finalAttrs: previousAttrs: {
         src = super.fetchgit {
           url = "https://github.com/libressl/portable.git";
-          rev = "031c2f1722f9af10299de3d22ff3c1467d541241";
-          sha256 = "sha256-ieNEEpO8S+yQ658oPveZ3b0VzmS1k6c3yExHABnYQuY=";
+          rev = "73779a46bf49c4f53cc4b81993135a7408a01963";
+          sha256 = "sha256-3ffzz2gdjKbsxJk765ZTuFYDldPmii7Zvcu7sNf9i8w=";
         };
       }
     )
