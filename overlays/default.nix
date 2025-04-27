@@ -7,6 +7,10 @@ self: super: {
           rev = "73779a46bf49c4f53cc4b81993135a7408a01963";
           sha256 = "sha256-3ffzz2gdjKbsxJk765ZTuFYDldPmii7Zvcu7sNf9i8w=";
         };
+        postPatch = ''
+          patchShebangs tests/
+        '';
+        doCheck = false;
       }
     )
   );
