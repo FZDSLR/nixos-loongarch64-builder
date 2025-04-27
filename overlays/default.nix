@@ -11,6 +11,8 @@ self: super: {
           patchShebangs tests/
         '';
         preConfigure = ''
+          ./autogen.sh \
+          rm -f configure \
           substituteInPlace CMakeLists.txt \
             --replace 'exec_prefix \''${prefix}' "exec_prefix ${placeholder "bin"}" \
             --replace 'libdir      \''${exec_prefix}' 'libdir \''${prefix}'
