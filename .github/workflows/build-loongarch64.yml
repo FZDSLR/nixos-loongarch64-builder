@@ -7,7 +7,7 @@ on:
     branches: [master]
 
 jobs:
-  build-hello:
+  build-base-packages:
     runs-on: ubuntu-latest
 
     steps:
