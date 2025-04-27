@@ -15,7 +15,6 @@
         system = "x86_64-linux";
 
         modules = [
-          { nixpkgs.config.allowUnsupportedSystem = true; }
           {
             nixpkgs.crossSystem = {
               system = "loongarch64-linux";
