@@ -26,8 +26,8 @@
                 DTB = true;
               };
             };
-            nixpkgs.overlays = [(import ./overlays/default.nix)];
           }
+          (import ./overlays/default.nix)
         ];
       };
     };
