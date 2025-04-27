@@ -2,7 +2,7 @@
   description = "test build NixOS Loongarch64 pkgs via Github Action";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:NixOS/nixpkgs/master";
   };
 
   outputs =
