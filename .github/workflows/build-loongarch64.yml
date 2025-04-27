@@ -23,5 +23,4 @@ jobs:
 
       - name: Build hello package for Loongarch64
         run: |
-          nix build .#nixosConfigurations.loongarch64.pkgs.hello \
-            --print-build-logs
+          ./build.sh
