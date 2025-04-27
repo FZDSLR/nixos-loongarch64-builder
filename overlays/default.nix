@@ -2,12 +2,11 @@ self: super: {
   libressl = (
     super.libressl.overrideAttrs (
       finalAttrs: previousAttrs: {
-        patches = [
-          (super.fetchurl {
-            url = "https://patch-diff.githubusercontent.com/raw/libressl/portable/pull/1146.patch";
-            sha256 = "12vn8rpxndsmrwnf713h85jwh1xs3d8kw83cy30pqiifn1iaf3nv";
-          })
-        ];
+        src = super.fetchgit {
+          url = "https://github.com/libressl/portable.git";
+          rev = "031c2f1722f9af10299de3d22ff3c1467d541241";
+          sha256 = "sha256-1rj2v0ch0iscr0vsg4xmck71bgfxk7vkwa4zxf8fqjxwjc949qw9";
+        };
       }
     )
   );
