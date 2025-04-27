@@ -15,10 +15,10 @@ nix eval --raw ".#nixosConfigurations.loongarch64.config.environment.systemPacka
   ' _ {} "$ERROR_LOG"
 
 if [[ -s "$ERROR_LOG" ]]; then
-  echo -e "\n\033[31m以下包构建失败：\033[0m"
+  echo -e "\n以下包构建失败："
   cat "$ERROR_LOG"
   exit 1
 else
-  echo -e "\n\033[32m所有包构建成功！\033[0m"
+  echo -e "\n所有包构建成功！"
   exit 0
 fi
