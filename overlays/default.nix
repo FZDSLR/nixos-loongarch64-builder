@@ -10,7 +10,6 @@ self: super: {
         postPatch = ''
           patchShebangs tests/
         '';
-        doCheck = false;
         preConfigure = ''
           substituteInPlace CMakeLists.txt \
             --replace 'exec_prefix \''${prefix}' "exec_prefix ${placeholder "bin"}" \
