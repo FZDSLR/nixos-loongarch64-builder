@@ -28,6 +28,7 @@
             };
           }
           (import ./overlays/default.nix)
+          (import ./modules/extra-packages.nix)
         ];
       };
 
