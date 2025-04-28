@@ -30,5 +30,7 @@
           (import ./overlays/default.nix)
         ];
       };
+
+      inherit nixpkgs;
     };
 }

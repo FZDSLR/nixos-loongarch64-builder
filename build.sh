@@ -4,6 +4,8 @@ ERROR_LOG=$(mktemp)
 ERROR_LOGS=$(mktemp)
 trap 'rm -f "$ERROR_LOG" "$ERROR_LOGS"' EXIT
 
+mkdir -p ./result
+
 nix eval --raw ".#nixosConfigurations.loongarch64.config.environment.systemPackages" \
   --apply "packages: builtins.concatStringsSep \"\n\" (map (pkg: pkg.drvPath) packages)" \
   | grep -E '^/nix/store/[0-9a-df-np-tv-z]{32}-[^/]+\.drv$' \
@@ -14,7 +16,7 @@ nix eval --raw ".#nixosConfigurations.loongarch64.config.environment.systemPacka
       echo "开始构建 $pkg_name"
 
       log_file=$(mktemp)
-      if nix-store --realise --verbose "$drv_path" > "$log_file" 2>&1; then
+      if nix-store --add-root "./result/$pkg_name" --realise --verbose "$drv_path" > "$log_file" 2>&1; then
         result_path=$(nix-store --query --binding out "$drv_path")
         echo "上传 $pkg_name 到Cachix"
         cachix push loongarch64-cross-test "$result_path"
@@ -25,6 +27,8 @@ nix eval --raw ".#nixosConfigurations.loongarch64.config.environment.systemPacka
         exit 1
       fi
     ' _ {} "$ERROR_LOG" "$ERROR_LOGS"
+
+nix-store --add-root ./result/nixpkgs -r $(nix eval --raw .#nixpkgs.outPath)
 
 if [[ -s "$ERROR_LOG" ]]; then
   echo -e "\n以下包构建失败："
