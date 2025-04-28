@@ -22,7 +22,6 @@
         flask
         spidev
         numpy
-        opencv4
         pillow
         smbus2
         python-periphery
