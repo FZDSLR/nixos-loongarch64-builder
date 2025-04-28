@@ -13,9 +13,26 @@
     curl
     vim
     git
+    nginx
+    fish
+    eza
+    bat
+    fastfetch
+    which
+    sl
+    lm_sensors
+    htop
+    mtdutils
+    i2c-tools
+    openssl
+    usbutils
+    iw
+    fzf
+
     (podman.override {
       extraRuntimes = [ pkgs.crun ];
     })
+
     (python3.withPackages (
       ps: with ps; [
         requests
