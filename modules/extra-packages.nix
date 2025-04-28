@@ -17,7 +17,6 @@
     fish
     eza
     bat
-    fastfetch
     which
     sl
     lm_sensors
@@ -28,6 +27,13 @@
     usbutils
     iw
     fzf
+
+    (fastfetch.override {
+      rpmSupport = false;
+      vulkanSupport = false;
+      waylandSupport = false;
+      x11Support = false;
+    })
 
     (podman.override {
       extraRuntimes = [ pkgs.crun ];
