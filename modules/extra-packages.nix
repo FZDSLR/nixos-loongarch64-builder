@@ -27,12 +27,17 @@
     usbutils
     iw
     fzf
+    ntp
 
     (fastfetch.override {
       rpmSupport = false;
       vulkanSupport = false;
       waylandSupport = false;
       x11Support = false;
+    })
+
+    (ffmpeg.override {
+      withSdl2 = false;
     })
 
     (podman.override {
