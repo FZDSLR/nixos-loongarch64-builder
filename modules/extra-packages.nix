@@ -28,6 +28,7 @@
     iw
     fzf
     ntp
+    webdav
 
     (fastfetch.override {
       rpmSupport = false;
