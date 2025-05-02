@@ -10,6 +10,7 @@
     gnutar
     p7zip
     cowsay
+    hello
     curl
     vim
     git
