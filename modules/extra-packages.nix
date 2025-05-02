@@ -9,9 +9,12 @@
     tree
     gnutar
     p7zip
+    unzip
+    busybox
     cowsay
     hello
     curl
+    wget
     vim
     git
     nginx
