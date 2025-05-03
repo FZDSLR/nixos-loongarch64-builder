@@ -1,14 +1,21 @@
 #!/usr/bin/env bash
 
+if [ $# -ne 1 ]; then
+    echo "Usage: $0 <nix-attribute-path>"
+    echo "Example: $0 environment.systemPackages or services.nginx.package"
+    exit 1
+fi
+ATTRIBUTE_PATH="$1"
+
 ERROR_LOG=$(mktemp)
 ERROR_LOGS=$(mktemp)
 trap 'rm -f "$ERROR_LOG" "$ERROR_LOGS"' EXIT
 
 mkdir -p ./result
 
-nix eval --raw ".#nixosConfigurations.loongarch64.config.environment.systemPackages" \
+nix eval --raw ".#nixosConfigurations.loongarch64.config.$ATTRIBUTE_PATH" \
   --apply "packages: builtins.concatStringsSep \"\n\" (map (pkg: pkg.drvPath) packages)" \
-  | grep -E '^/nix/store/[0-9a-df-np-tv-z]{32}-[^/]+\.drv$' \
+  | grep -E '^/nix/store/[0-9a-z]{32}-[^/]+\.drv$' \
   | sort -u \
   | xargs -I{} sh -c '
       drv_path="$1"
@@ -18,7 +25,7 @@ nix eval --raw ".#nixosConfigurations.loongarch64.config.environment.systemPacka
       log_file=$(mktemp)
       if nix-store --add-root "./result/$pkg_name" --realise --verbose "$drv_path" > "$log_file" 2>&1; then
         result_path=$(nix-store --query --binding out "$drv_path")
-        echo "上传 $pkg_name 到Cachix"
+        echo "上传 $result_path 到 Cachix"
         cachix push loongarch64-cross-test "$result_path"
         rm -f "$log_file"
       else

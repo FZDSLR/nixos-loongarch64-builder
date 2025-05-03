@@ -25,7 +25,7 @@ jobs:
         with:
           primary-key: nix-${{ runner.os }}-${{ hashFiles('**/*.nix', '**/flake.lock') }}
           restore-prefixes-first-match: nix-${{ runner.os }}-
-          gc-max-store-size-linux: 5G
+          gc-max-store-size-linux: 3G
           purge: true
           purge-prefixes: nix-${{ runner.os }}-
           purge-created: 0
@@ -38,6 +38,18 @@ jobs:
           name: loongarch64-cross-test
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
-      - name: Build packages for Loongarch64
+      - name: Build system packages for Loongarch64
         run: |
-          ./build.sh
+          ./build.sh environment.systemPackages
+
+      - name: Build python packages for Loongarch64
+        run: |
+          ./build.sh pkgSet.pythonPackages
+
+      - name: Build base cli packages for Loongarch64
+        run: |
+          ./build.sh pkgSet.baseCliPackage
+
+      - name: Build other packages for Loongarch64
+        run: |
+          ./build.sh pkgSet.otherPackages
