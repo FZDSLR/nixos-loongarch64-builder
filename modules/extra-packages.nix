@@ -56,6 +56,7 @@
       iw
       fzf
       ntp
+      jq
 
       (fastfetch.override {
         rpmSupport = false;
@@ -82,6 +83,7 @@
     ];
     description = "Other packages";
   };
+
   config = {
 
   };

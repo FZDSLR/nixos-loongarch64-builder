@@ -48,7 +48,7 @@ jobs:
 
       - name: Build base cli packages for Loongarch64
         run: |
-          ./build.sh pkgSet.baseCliPackage
+          ./build.sh pkgSet.baseCliPackages
 
       - name: Build other packages for Loongarch64
         run: |
