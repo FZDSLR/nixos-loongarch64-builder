@@ -72,6 +72,7 @@
     type = with lib.types; listOf package;
     default = with pkgs; [
       webdav
+      alist
 
       (ffmpeg.override {
         withSdl2 = false;
