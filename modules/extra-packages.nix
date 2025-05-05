@@ -73,8 +73,6 @@
     default = with pkgs; [
       webdav
 
-      nixStatic
-
       (ffmpeg.override {
         withSdl2 = false;
       })
