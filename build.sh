@@ -29,7 +29,6 @@ nix eval --raw ".#nixosConfigurations.loongarch64.config.$ATTRIBUTE_PATH" \
         result_path=$(nix-store --query --binding out "$drv_path")
         echo "上传 $result_path 到 Cachix"
         cachix push loongarch64-cross-test "$result_path"
-        nix-collect-garbage -d
         rm -f "$log_file"
       else
         echo "$drv_path" >> "$2"
@@ -37,6 +36,8 @@ nix eval --raw ".#nixosConfigurations.loongarch64.config.$ATTRIBUTE_PATH" \
         exit 1
       fi
     ' _ {} "$ERROR_LOG" "$ERROR_LOGS"
+
+nix-collect-garbage -d
 
 if [[ -s "$ERROR_LOG" ]]; then
   echo -e "\n以下包构建失败："
