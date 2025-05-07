@@ -73,13 +73,6 @@
       (podman.override {
         extraRuntimes = [ pkgs.crun ];
       })
-
-      (fastfetch.override {
-        rpmSupport = false;
-        vulkanSupport = false;
-        waylandSupport = false;
-        x11Support = false;
-      })
     ];
     description = "Other packages";
   };
