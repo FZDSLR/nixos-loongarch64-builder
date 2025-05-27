@@ -19,6 +19,7 @@ jobs:
           remove-haskell: 'true'
           remove-codeql: 'true'
           remove-docker-images: 'true'
+          build-mount-path: '/nix'
       - name: Checkout repository
         uses: actions/checkout@v4
 
