@@ -24,13 +24,6 @@ nix eval --raw ".#nixosConfigurations.loongarch64.config.$ATTRIBUTE_PATH" \
       pkg_name=$(basename "$drv_path")
       echo "开始构建 $pkg_name"
 
-      available_kb=$(df -P /nix/store | awk "NR==2 {print \$4}")
-      required_kb=$((3 * 1024 * 1024))  # 3GB in KB
-      if [ "$available_kb" -lt "$required_kb" ]; then
-          echo "磁盘空间不足3GB，执行垃圾回收..."
-          nix-collect-garbage -d
-      fi
-
       log_file=$(mktemp)
       if nix-store --add-root "./result/$pkg_name" --realise --verbose "$drv_path" > "$log_file" 2>&1; then
         result_path=$(nix-store --query --binding out "$drv_path")
