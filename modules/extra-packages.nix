@@ -30,9 +30,7 @@
     type = with lib.types; listOf package;
     default = with pkgs; [
       linuxPackages_6_12_99pi_tf.kernel
-      linuxPackages_6_12_99pi_tf.kernel.dev
       linuxPackages_6_12_99pi_wifi.kernel
-      linuxPackages_6_12_99pi_wifi.kernel.dev
     ];
     description = "kernel packages";
   };
