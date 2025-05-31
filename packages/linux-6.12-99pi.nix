@@ -21,6 +21,7 @@ let
       let
         defaultConfig = "${kernelSrc}/arch/loongarch/configs/loongson_2k300_defconfig";
         extraConfig = pkgs.writeText "extraconfig" ''
+          CONFIG_DTB_MATCH_BY_BOARD_NAME=n
           CONFIG_BUILTIN_DTB_NAME=${dtbname}
         '';
       in
