@@ -16,13 +16,14 @@ let
     sha256 = "sha256-6buUOZ2ojpTn0ZJIpDyJPotA0zhiMcfLmM85LciIIis=";
   };
   kernelConfig =
-    if configfile != null then configfile
+    if configfile != null then
+      configfile
     else
       let
         defaultConfig = "${kernelSrc}/arch/loongarch/configs/loongson_2k300_defconfig";
         extraConfig = pkgs.writeText "extraconfig" ''
           CONFIG_DTB_MATCH_BY_BOARD_NAME=n
-          CONFIG_BUILTIN_DTB_NAME=${dtbname}
+          CONFIG_BUILTIN_DTB_NAME="${dtbname}"
         '';
       in
       pkgs.runCommand "kernel-config" {} ''
