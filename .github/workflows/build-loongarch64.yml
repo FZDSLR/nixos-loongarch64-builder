@@ -51,13 +51,17 @@ jobs:
         run: |
           ./build.sh environment.systemPackages
 
-      - name: Build python packages for Loongarch64
+      - name: Build kernels for Loongarch64
         run: |
-          ./build.sh pkgSet.pythonPackages
+          ./build.sh pkgSet.kernelPackages
 
       - name: Build base cli packages for Loongarch64
         run: |
           ./build.sh pkgSet.baseCliPackages
+
+      - name: Build python packages for Loongarch64
+        run: |
+          ./build.sh pkgSet.pythonPackages
 
       - name: Build other packages for Loongarch64
         run: |
