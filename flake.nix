@@ -33,7 +33,6 @@
               gcc.arch = "loongarch64";
               linux-kernel = {
                 name = "loong64";
-                baseConfig = "defconfig";
                 target = "uImage";
               };
             };

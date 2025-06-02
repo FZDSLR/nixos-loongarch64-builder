@@ -16,20 +16,25 @@ let
     sha256 = "sha256-6buUOZ2ojpTn0ZJIpDyJPotA0zhiMcfLmM85LciIIis=";
   };
   kernelConfig =
-    if configfile != null then
-      configfile
-    else
-      let
-        defaultConfig = "${kernelSrc}/arch/loongarch/configs/loongson_2k300_defconfig";
-        extraConfig = pkgs.writeText "extraconfig" ''
-          CONFIG_DTB_MATCH_BY_BOARD_NAME=n
-          CONFIG_BUILTIN_DTB_NAME="${dtbname}"
-        '';
-      in
-      pkgs.runCommand "kernel-config" {} ''
-        cat ${defaultConfig} >> "$out"
-        cat ${extraConfig} >> "$out"
+    let
+      baseConfig =
+        if configfile != null then
+          configfile
+        else
+          ./99pi-config;
+
+      overrideConfig = pkgs.writeText "override-config" ''
+        CONFIG_DTB_MATCH_BY_BOARD_NAME=n
+        CONFIG_BUILTIN_DTB_NAME="${dtbname}"
       '';
+    in
+    pkgs.runCommand "kernel-config" {} ''
+    cp ${baseConfig} config.work
+    chmod u+w config.work
+    sed -i '/CONFIG_BUILTIN_DTB_NAME/d' config.work
+    cat ${overrideConfig} >> config.work
+    mv config.work "$out"
+    '';
 in
 (linuxManualConfig {
   version = "6.12.0";
