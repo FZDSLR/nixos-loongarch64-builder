@@ -11,9 +11,9 @@
           finalAttrs: previousAttrs: {
             version = "2024.04";
             src = super.fetchgit {
-              url = "https://gitee.com/FZDSLR/uboot-la-99pi.git";
-              rev = "52c5ac25f9542da6e1864fb77733d9b90726da1c";
-              sha256 = "sha256-0jWwo0zUI3YjBfO2gSoWJ7W1fPx639pBnM598gQ88JI=";
+              url = "https://gitee.com/open-loongarch/u-boot.git";
+              rev = "96038f5a0c757fab5606ef916055c61f741aca07";
+              sha256 = "sha256-OpPOCVR5eel0U3wenBNaRmaMEv7WYbBiWZfexEfo+Dw=";
             };
             patches = [ ];
           }
