@@ -26,18 +26,7 @@
         system = "x86_64-linux";
 
         modules = [
-          {
-            nixpkgs.crossSystem = {
-              system = "loongarch64-linux";
-              config = "loongarch64-unknown-linux-gnu";
-              gcc.arch = "loongarch64";
-              linux-kernel = {
-                name = "loong64";
-                target = "uImage";
-              };
-            };
-          }
-          (import ./overlays/default.nix)
+          (import ./modules/cross-config.nix)
           (import ./modules/extra-packages.nix)
         ];
       };
