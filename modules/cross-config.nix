@@ -8,10 +8,13 @@
       name = "loong64";
       target = "uImage";
     };
-    rustc.config = "loongarch64-unknown-linux-gnu-nosimd";
-    rustc.platform = builtins.fromJSON (builtins.readFile ./rust-loongarch64-gnu-nosimd.json) // {
-      linker = "loongarch64-unknown-linux-gnu-gcc";
-      linker-flavor = "gcc";
+    rustc.config = "loongarch64-unknown-linux-gnu";
+    rustc.platform = {
+      arch = "loongarch64";
+      os = "linux";
+      target-family = [ "unix" ];
+      vendor = "unknown";
+      features= "+f,+d";
     };
   };
   nixpkgs.overlays = [(import ../overlays/default.nix)];
