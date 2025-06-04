@@ -20,5 +20,4 @@
   linuxPackages_6_12_99pi_wifi = super.linuxPackagesFor (
     super.callPackage ../packages/linux-6.12-99pi.nix { dtbname = "ls2k300_99pi_wifi"; }
   );
-
 })

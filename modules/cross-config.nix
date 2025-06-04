@@ -9,7 +9,10 @@
       target = "uImage";
     };
     rustc.config = "loongarch64-unknown-linux-gnu-nosimd";
-    rustc.platform = builtins.fromJSON (builtins.readFile ./rust-loongarch64-gnu-nosimd.json);
+    rustc.platform = builtins.fromJSON (builtins.readFile ./rust-loongarch64-gnu-nosimd.json) // {
+      linker = "loongarch64-unknown-linux-gnu-gcc";
+      linker-flavor = "gcc";
+    };
   };
   nixpkgs.overlays = [(import ../overlays/default.nix)];
 }
