@@ -10,12 +10,11 @@
   "features": "+f,+d",
   "has-rpath": true,
   "has-thread-local": true,
-  "linker-flavor": "gnu-cc",
   "llvm-abiname": "lp64d",
   "llvm-target": "loongarch64-unknown-linux-gnu",
   "max-atomic-width": 64,
   "metadata": {
-    "description": "LoongArch64 Linux, LP64D ABI (kernel 5.19, glibc 2.36)",
+    "description": "LoongArch64 Linux, LP64D ABI (kernel 5.19, glibc 2.36), no SIMD",
     "host_tools": true,
     "std": true,
     "tier": 2
