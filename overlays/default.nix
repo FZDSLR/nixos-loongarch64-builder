@@ -29,7 +29,7 @@
           substituteInPlace compiler/rustc_target/src/spec/targets/loongarch64_unknown_linux_gnu.rs \
             --replace 'features: "+f,+d,+lsx".into(),' 'features: "+f,+d".into(),'
         '';
-      RUSTFLAGS = (oldAttrs.RUSTFLAGS or "") + " -Cdebuginfo-level=0";
+      RUSTFLAGS = (oldAttrs.RUSTFLAGS or "") + " -Cdebuginfo=0";
     });
   });
 
