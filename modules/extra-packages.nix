@@ -52,8 +52,6 @@
       git
       nginx
       fish
-      eza
-      bat
       which
       sl
       lm_sensors
