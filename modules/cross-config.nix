@@ -9,13 +9,7 @@
       target = "uImage";
     };
     rust.rustcTarget = "loongarch64-unknown-linux-gnu";
-    rust.platform = {
-      arch = "loongarch64";
-      os = "linux";
-      target-family = [ "unix" ];
-      vendor = "unknown";
-      features= "+f,+d,-lsx";
-    };
+    rust.platform = builtins.fromJSON (builtins.readFile ./rust-loongarch64-gnu-nosimd.json);
   };
   nixpkgs.overlays = [(import ../overlays/default.nix)];
 }

@@ -49,6 +49,10 @@ jobs:
           name: loongarch64-cross-test
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
+      - name: Build base cli packages for Loongarch64
+        run: |
+          ./build.sh pkgSet.baseCliPackages
+
       - name: Build system packages for Loongarch64
         run: |
           ./build.sh environment.systemPackages
@@ -56,10 +60,6 @@ jobs:
       - name: Build kernels for Loongarch64
         run: |
           ./build.sh pkgSet.kernelPackages
-
-      - name: Build base cli packages for Loongarch64
-        run: |
-          ./build.sh pkgSet.baseCliPackages
 
       - name: Build python packages for Loongarch64
         run: |
