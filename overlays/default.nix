@@ -42,4 +42,9 @@
     rustc = self.rustc;
 #     cargo-auditable = self.cargo-auditable;
   });
+
+  rustPlatform = super.makeRustPlatform {
+    cargo = self.cargo;
+    rustc = self.rustc;
+  };
 })
