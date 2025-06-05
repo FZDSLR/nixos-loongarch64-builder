@@ -29,6 +29,17 @@
           substituteInPlace compiler/rustc_target/src/spec/targets/loongarch64_unknown_linux_gnu.rs \
             --replace 'features: "+f,+d,+lsx".into(),' 'features: "+f,+d".into(),'
         '';
+      RUSTFLAGS = (oldAttrs.RUSTFLAGS or "") + " -Cdebuginfo-level=0";
     });
+  });
+
+#   cargo-auditable = super.cargo-auditable.override(old: {
+#     buildPackages = self.buildPackages;
+#   });
+#
+#
+  cargo = super.cargo.override (old:{
+    rustc = self.rustc;
+#     cargo-auditable = self.cargo-auditable;
   });
 })
