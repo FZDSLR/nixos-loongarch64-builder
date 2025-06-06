@@ -35,8 +35,8 @@
 #     cargo = self.rust-bin.stable."1.83.0".minimal;
 
     rustPlatform_1_83 = super.makeRustPlatform {
-      cargo = self.rust-bin.stable."1.83.0".minimal;
-      rustc = self.rust-bin.stable."1.83.0".minimal;
+      cargo = self.buildPackages.rust-bin.stable."1.83.0".minimal;
+      rustc = self.buildPackages.rust-bin.stable."1.83.0".minimal;
     };
 
   }
