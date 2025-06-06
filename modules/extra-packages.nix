@@ -52,6 +52,8 @@
       git
       nginx
       nsncd
+      eza
+      bat
       which
       sl
       lm_sensors

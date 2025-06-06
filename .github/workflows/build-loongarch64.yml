@@ -14,7 +14,7 @@ jobs:
       - name: Maximize build space
         uses: easimon/maximize-build-space@v10
         with:
-          root-reserve-mb: 24576
+          root-reserve-mb: 16384
           swap-size-mb: 16384
           remove-dotnet: 'true'
           remove-android: 'true'
@@ -49,13 +49,13 @@ jobs:
           name: loongarch64-cross-test
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
-      - name: Build base cli packages for Loongarch64
-        run: |
-          ./build.sh pkgSet.baseCliPackages
-
       - name: Build system packages for Loongarch64
         run: |
           ./build.sh environment.systemPackages
+
+      - name: Build base cli packages for Loongarch64
+        run: |
+          ./build.sh pkgSet.baseCliPackages
 
       - name: Build kernels for Loongarch64
         run: |

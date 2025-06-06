@@ -5,6 +5,9 @@
     rustPackages = [
       "nsncd"
       "eza"
+      "bat"
+      "netavark"
+      "aardvark-dns"
     ];
     updateRustPlatform = pkg: pkg.override { rustPlatform = self.rustPlatform_1_83; };
   in
