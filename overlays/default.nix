@@ -34,14 +34,20 @@
       super.callPackage ../packages/linux-6.12-99pi.nix { dtbname = "ls2k300_99pi_wifi"; }
     );
 
-#     rustc = self.rust-bin.stable."1.83.0".minimal;
-#     cargo = self.rust-bin.stable."1.83.0".minimal;
-
     rustPlatform_1_83 = super.makeRustPlatform {
       cargo = self.buildPackages.rust-bin.stable."1.83.0".minimal;
       rustc = self.buildPackages.rust-bin.stable."1.83.0".minimal;
     };
 
+    mercurial = super.mercurial.override {
+      cargo = self.buildPackages.rust-bin.stable."1.83.0".minimal;
+      rustc = self.buildPackages.rust-bin.stable."1.83.0".minimal;
+    };
+
+    fish = super.fish.override {
+      cargo = self.buildPackages.rust-bin.stable."1.83.0".minimal;
+      rustc = self.buildPackages.rust-bin.stable."1.83.0".minimal;
+    };
   }
   // (super.lib.genAttrs rustPackages (name: updateRustPlatform super.${name}))
 )

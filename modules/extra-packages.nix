@@ -63,6 +63,7 @@
       openssl
       usbutils
       iw
+      fish
       fzf
       ntp
       jq
