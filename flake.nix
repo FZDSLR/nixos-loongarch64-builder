@@ -3,6 +3,10 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/master";
+    rust-overlay = {
+      url = "github:oxalica/rust-overlay";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   nixConfig = {
@@ -19,12 +23,13 @@
   outputs =
     {
       nixpkgs,
+      rust-overlay,
       ...
     }:
     {
       nixosConfigurations.loongarch64 = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
-
+        specialArgs = { inherit rust-overlay;};
         modules = [
           (import ./modules/cross-config.nix)
           (import ./modules/extra-packages.nix)

@@ -51,7 +51,7 @@
       vim
       git
       nginx
-      fish
+      nsncd
       which
       sl
       lm_sensors

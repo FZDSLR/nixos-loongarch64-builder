@@ -21,30 +21,8 @@
     super.callPackage ../packages/linux-6.12-99pi.nix { dtbname = "ls2k300_99pi_wifi"; }
   );
 
-  rustc = super.rustc.override (old: {
-    rustc-unwrapped = old.rustc-unwrapped.overrideAttrs (oldAttrs: {
-      postPatch =
-        (oldAttrs.postPatch or "")
-        + ''
-          substituteInPlace compiler/rustc_target/src/spec/targets/loongarch64_unknown_linux_gnu.rs \
-            --replace 'features: "+f,+d,+lsx".into(),' 'features: "+f,+d".into(),'
-        '';
-      RUSTFLAGS = (oldAttrs.RUSTFLAGS or "") + " -Cdebuginfo=0";
-    });
-  });
-
-#   cargo-auditable = super.cargo-auditable.override(old: {
-#     buildPackages = self.buildPackages;
-#   });
-#
-#
-  cargo = super.cargo.override (old:{
-    rustc = self.rustc;
-#     cargo-auditable = self.cargo-auditable;
-  });
-
   rustPlatform = super.makeRustPlatform {
-    cargo = self.cargo;
-    rustc = self.rustc;
+    cargo = self.rust-bin.stable."1.83.0".minimal;
+    rustc = self.rust-bin.stable."1.83.0".minimal;
   };
 })

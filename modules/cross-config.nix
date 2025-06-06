@@ -1,4 +1,4 @@
-{ lib, pkgs, ... }:
+{ lib, pkgs, rust-overlay, ... }:
 {
   nixpkgs.crossSystem = {
     system = "loongarch64-linux";
@@ -11,5 +11,8 @@
 #     rust.rustcTarget = "loongarch64-unknown-linux-gnu";
 #     rust.platform = builtins.fromJSON (builtins.readFile ./rust-loongarch64-gnu-nosimd.json);
   };
-  nixpkgs.overlays = [(import ../overlays/default.nix)];
+  nixpkgs.overlays = [
+    (import ../overlays/default.nix)
+    (rust-overlay.overlays.default)
+  ];
 }
