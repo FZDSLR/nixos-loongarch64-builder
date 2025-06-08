@@ -52,8 +52,20 @@
 
     rustPlatform = if isCross then self.rustPlatform_1_83 else super.rustPlatform;
 
-    cargo = if isCrossTarget then self.buildPackages.rust-bin.stable."1.83.0".minimal else super.cargo;
-    rustc = if isCrossTarget then self.buildPackages.rust-bin.stable."1.83.0".minimal else super.rustc;
+    cargo =
+      if isCrossTarget then
+        self.buildPackages.rust-bin.stable."1.83.0".minimal.override {
+          targets = [ "loongarch64-unknown-linux-gnu" ];
+        }
+      else
+        super.cargo;
+    rustc =
+      if isCrossTarget then
+        self.buildPackages.rust-bin.stable."1.83.0".minimal.override {
+          targets = [ "loongarch64-unknown-linux-gnu" ];
+        }
+      else
+        super.rustc;
 
   }
 
