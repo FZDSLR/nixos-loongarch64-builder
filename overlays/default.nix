@@ -46,7 +46,7 @@
         ({ patches = [ ./initrd-support.patch ]; });
 
     podman = super.podman.override {
-      extraRuntimes = null;
+      extraRuntimes = [ ];
     };
 
     rustPlatform_1_83 = super.makeRustPlatform {
