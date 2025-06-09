@@ -1,6 +1,8 @@
 # .github/workflows/build-package.yml
 name: Build Single Loongarch64 Package
 
+run-name: Build Package ${{ inputs.package-name }}
+
 on:
   workflow_dispatch:
     inputs:
@@ -8,7 +10,6 @@ on:
         description: 'Package name to build'
         required: true
         type: string
-    run-name: Build Package ${{ inputs.package-name }}
 
 jobs:
   build-package:
