@@ -8,6 +8,7 @@ on:
         description: 'Package name to build'
         required: true
         type: string
+    run-name: Build Package ${{ inputs.package-name }}
 
 jobs:
   build-package:
@@ -45,4 +46,4 @@ jobs:
       - name: Build ${{ github.event.inputs.package-name }} for Loongarch64
         run: |
           nix build --print-build-logs \
-            ".#nixosConfigurations.loongarch64.packages.${{ github.event.inputs.package-name }}"
+            ".#nixosConfigurations.loongarch64.pkgs.${{ github.event.inputs.package-name }}"
