@@ -45,6 +45,10 @@
       }).overrideAttrs
         ({ patches = [ ./initrd-support.patch ]; });
 
+    podman = super.podman.override {
+      extraRuntimes = null;
+    };
+
     rustPlatform_1_83 = super.makeRustPlatform {
       cargo = self.buildPackages.rust-bin.stable."1.83.0".minimal;
       rustc = self.buildPackages.rust-bin.stable."1.83.0".minimal;

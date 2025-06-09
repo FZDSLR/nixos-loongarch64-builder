@@ -80,9 +80,7 @@
         withSdl2 = false;
       })
 
-      (podman.override {
-        extraRuntimes = [ pkgs.crun ];
-      })
+      podman
     ];
     description = "Other packages";
   };
