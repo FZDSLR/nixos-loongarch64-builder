@@ -1,0 +1,48 @@
+# .github/workflows/build-package.yml
+name: Build Single Loongarch64 Package
+
+on:
+  workflow_dispatch:
+    inputs:
+      package-name:
+        description: 'Package name to build'
+        required: true
+        type: string
+
+jobs:
+  build-package:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Maximize build space
+        uses: easimon/maximize-build-space@v10
+        with:
+          root-reserve-mb: 16384
+          swap-size-mb: 16384
+          remove-dotnet: 'true'
+          remove-android: 'true'
+          remove-haskell: 'true'
+          remove-codeql: 'true'
+          remove-docker-images: 'true'
+          build-mount-path: '/nix'
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - uses: nixbuild/nix-quick-install-action@v30
+        with:
+          nix_conf: |
+            keep-env-derivations = true
+            keep-outputs = true
+
+      - name: Restore Nix store cache
+        uses: nix-community/cache-nix-action@v6
+        with:
+          primary-key: nix-${{ runner.os }}-${{ hashFiles('**/*.nix', '**/flake.lock') }}
+          restore-prefixes-first-match: nix-${{ runner.os }}-
+          save: false
+
+      - name: Build ${{ github.event.inputs.package-name }} for Loongarch64
+        run: |
+          nix build --print-build-logs \
+            ".#nixosConfigurations.loongarch64.packages.${{ github.event.inputs.package-name }}"
