@@ -71,6 +71,14 @@
       else
         super.rustc;
 
+    cargo-auditable-cargo-wrapper =
+      if isCrossTarget then
+        super.cargo-auditable-cargo-wrapper.override {
+          cargo = self.buildPackages.rust-bin.stable."1.83.0".minimal.override {
+            targets = [ "loongarch64-unknown-linux-gnu" ];
+          };
+        }
+      else
+        super.cargo-auditable-cargo-wrapper;
   }
-
 )

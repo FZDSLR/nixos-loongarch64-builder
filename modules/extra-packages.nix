@@ -67,6 +67,7 @@
       fzf
       ntp
       jq
+      fastfetchMinimal
     ];
     description = "Useful cli packages";
   };
