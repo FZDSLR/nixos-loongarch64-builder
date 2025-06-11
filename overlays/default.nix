@@ -53,8 +53,8 @@
       finalAttrs: previousAttrs: {
         patches = previousAttrs.patches or [ ] ++ [
           (super.fetchurl {
-            url = "https://gitlab.alpinelinux.org/alpine/aports/-/blob/82e8ff7e79e388c9363b0c0781c04c944a4caacd/community/runc/add-seccomp-for-loongarch64.patch";
-            sha256 = "0d89dssbkmxra6zswj81mapmbkd4ppmv2igbn6q0limpd8h9d8i5";
+            url = "https://gitlab.alpinelinux.org/alpine/aports/-/raw/82e8ff7e79e388c9363b0c0781c04c944a4caacd/community/runc/add-seccomp-for-loongarch64.patch";
+            sha256 = "17krbjkw8lzf9x3h10zw5bpgcgs4ibwadakabrl98nj4vnp5qfqb";
           })
         ];
       }
