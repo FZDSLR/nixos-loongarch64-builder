@@ -49,6 +49,17 @@
       extraRuntimes = [ ];
     };
 
+    runc = super.runc.overrideAttrs (
+      finalAttrs: previousAttrs: {
+        patches = previousAttrs.patches or [ ] ++ [
+          (super.fetchurl {
+            url = "https://gitlab.alpinelinux.org/alpine/aports/-/blob/82e8ff7e79e388c9363b0c0781c04c944a4caacd/community/runc/add-seccomp-for-loongarch64.patch";
+            sha256 = "0d89dssbkmxra6zswj81mapmbkd4ppmv2igbn6q0limpd8h9d8i5";
+          })
+        ];
+      }
+    );
+
     rustPlatform_1_83 = super.makeRustPlatform {
       cargo = self.buildPackages.rust-bin.stable."1.83.0".minimal;
       rustc = self.buildPackages.rust-bin.stable."1.83.0".minimal;
