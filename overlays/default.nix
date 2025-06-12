@@ -28,6 +28,16 @@
       super.callPackage ../packages/linux-6.12-99pi.nix { dtbname = "ls2k300_99pi_wifi"; }
     );
 
+    linuxPackages_6_12_2k300 = super.linuxPackagesFor (
+      super.callPackage ../packages/linux-6.12-2k300.nix { }
+    );
+
+    linuxPackages_6_12_2k300_rt = super.linuxPackagesFor (
+      super.callPackage ../packages/linux-6.12-2k300.nix {
+        configfile = ../packages/loongson_2k300_rt_config;
+      }
+    );
+
     ubootLs99PiTF =
       (super.buildUBoot {
         defconfig = "loongson_2k300_99pi_tf_defconfig";
