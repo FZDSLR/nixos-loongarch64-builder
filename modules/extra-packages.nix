@@ -29,8 +29,8 @@
   options.pkgSet.kernelPackages = lib.mkOption {
     type = with lib.types; listOf package;
     default = with pkgs; [
-      linuxPackages_6_12_99pi_tf.kernel
-      linuxPackages_6_12_99pi_wifi.kernel
+      linuxPackages_6_12_2k300
+      linuxPackages_6_12_2k300_rt
     ];
     description = "kernel packages";
   };

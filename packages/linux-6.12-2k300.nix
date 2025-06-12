@@ -14,8 +14,8 @@
 
   src = pkgs.fetchgit {
     url = "https://gitee.com/open-loongarch/linux-6.12.git";
-    rev = "012dbfc9b1a9ddd8be883268e90eae5e1ee278db";
-    sha256 = "sha256-6buUOZ2ojpTn0ZJIpDyJPotA0zhiMcfLmM85LciIIis=";
+    rev = "aa348aad53dbd005c5cbbe16c63ea34ebf281fac";
+    sha256 = "sha256-bMn2DiCx/5dQq7hwQwg2B9/dMw9ldB3WO6aPz0eNJOQ=";
   };
 
   configfile = configfile;

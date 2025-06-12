@@ -20,14 +20,6 @@
       )
     );
 
-    linuxPackages_6_12_99pi_tf = super.linuxPackagesFor (
-      super.callPackage ../packages/linux-6.12-99pi.nix { }
-    );
-
-    linuxPackages_6_12_99pi_wifi = super.linuxPackagesFor (
-      super.callPackage ../packages/linux-6.12-99pi.nix { dtbname = "ls2k300_99pi_wifi"; }
-    );
-
     linuxPackages_6_12_2k300 = super.linuxPackagesFor (
       super.callPackage ../packages/linux-6.12-2k300.nix { }
     );
