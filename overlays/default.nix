@@ -100,5 +100,17 @@
         }
       else
         super.cargo-auditable-cargo-wrapper;
+
+    ghc = 
+      if isCrossTarget then
+        super.ghc.override {
+          libffi = null;
+          bootPkgs = super.haskell.compiler.ghc984Binary;
+          useLLVM = false;
+          enableUnregisterised = true;
+        }
+      else
+        super.ghc;
+    
   }
 )
