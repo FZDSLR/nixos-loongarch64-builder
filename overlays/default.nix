@@ -105,7 +105,7 @@
       if isCrossTarget then
         super.ghc.override {
           libffi = null;
-          bootPkgs = super.haskell.compiler.ghc984Binary;
+          bootPkgs = super.haskell.compiler.ghc963Binary;
           useLLVM = false;
           enableUnregisterised = true;
         }
