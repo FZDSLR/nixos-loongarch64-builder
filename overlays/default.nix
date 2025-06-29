@@ -101,16 +101,16 @@
       else
         super.cargo-auditable-cargo-wrapper;
 
-    haskellPackages-la = super.haskellPackages.override {
+    haskellPackages-la = super.haskell.packages.ghc963.override {
       ghc =
         if isCrossTarget then
-          super.haskellPackages.ghc.override {
+          super.haskell.packages.ghc963.ghc.override {
             libffi = null;
             useLLVM = false;
             enableUnregisterised = true;
           }
         else
-          super.haskellPackages.ghc;
+          super.haskell.packages.ghc963.ghc;
     };
   }
 )
