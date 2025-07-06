@@ -4,6 +4,10 @@
   let
     isCross = super.stdenv.buildPlatform != super.stdenv.hostPlatform;
     isCrossTarget = super.stdenv.buildPlatform != super.stdenv.targetPlatform;
+    libressl-loongarch64Conf = super.fetchurl {
+      url = "https://raw.githubusercontent.com/libressl-portable/portable/v4.1.0/include/arch/loongarch64/opensslconf.h";
+      sha256 = "02l6h1qqrbzmdk10ybzs0m8v9ps72cg32hm737x5rjwlrkk71izb";
+    };
   in
   {
     ubootTools = (
@@ -100,5 +104,14 @@
         }
       else
         super.cargo-auditable-cargo-wrapper;
+
+    libressl = super.libressl.overrideAttrs (oldAttrs: {
+      postPatch =
+        (oldAttrs.postPatch or "")
+        + ''
+          mkdir -p include/arch/loongarch64
+          cp ${libressl-loongarch64Conf} include/arch/loongarch64/opensslconf.h
+        '';
+    });
   }
 )
