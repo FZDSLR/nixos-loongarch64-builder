@@ -113,5 +113,17 @@
           cp ${libressl-loongarch64Conf} include/arch/loongarch64/opensslconf.h
         '';
     });
+
+    libajantv2 =
+      if isCross then
+        super.libajantv2.override (old: {
+          cmakeFlags =
+            (old.cmakeFlags or [ ])
+            + [
+              (super.lib.cmakeBool "AJANTV2_DISABLE_DRIVER" true)
+            ];
+        })
+      else
+        super.libajantv2;
   }
 )
