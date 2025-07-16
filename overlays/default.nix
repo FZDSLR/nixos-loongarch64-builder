@@ -104,14 +104,5 @@
         }
       else
         super.cargo-auditable-cargo-wrapper;
-
-    libressl = super.libressl.overrideAttrs (oldAttrs: {
-      postPatch =
-        (oldAttrs.postPatch or "")
-        + ''
-          mkdir -p include/arch/loongarch64
-          cp ${libressl-loongarch64Conf} include/arch/loongarch64/opensslconf.h
-        '';
-    });
   }
 )
