@@ -1,0 +1,19 @@
+diff --git a/hadrian/src/Settings/Packages.hs b/hadrian/src/Settings/Packages.hs
+index 5346545d937c..37ee2fdd6c88 100644
+--- a/hadrian/src/Settings/Packages.hs
++++ b/hadrian/src/Settings/Packages.hs
+@@ -151,10 +151,9 @@ packageArgs = do
+           -- compiler comes with the same versions as the one we are building.
+           --
+             builder (Cabal Setup) ? cabalExtraDirs ffiIncludeDir ffiLibraryDir
+-          , builder (Cabal Flags) ? ifM stage0
+-              (andM [cross, bootCross] `cabalFlag` "internal-interpreter")
+-              (arg "internal-interpreter")
+-
++          , builder (Cabal Flags) ? mconcat
++             [ arg "internal-interpreter"
++             ]
+           ]
+ 
+         , package unix ? builder (Cabal Flags) ? arg "+os-string"
+-- 

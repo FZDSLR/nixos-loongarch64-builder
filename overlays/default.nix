@@ -108,11 +108,17 @@
     haskellPackages-la = super.haskellPackages.override {
       ghc =
         if isCrossTarget then
-          super.haskellPackages.ghc.override {
+          (super.haskellPackages.ghc.override {
             libffi = null;
             useLLVM = false;
             enableUnregisterised = true;
-          }
+          }).overrideAttrs
+            (
+              finalAttrs: previousAttrs: {
+                patches = (previousAttrs.patches or [ ]) ++ [ ./ghc-force-internal-interpreter.patch ];
+              }
+            )
+
         else
           super.haskellPackages.ghc;
     };
