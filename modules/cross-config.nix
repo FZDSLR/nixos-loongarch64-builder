@@ -1,4 +1,4 @@
-{ lib, pkgs, rust-overlay, ... }:
+{ lib, pkgs, rust-overlay, haskellNix, ... }:
 {
   nixpkgs.crossSystem = {
     system = "loongarch64-linux";
@@ -14,5 +14,6 @@
   nixpkgs.overlays = [
     (import ../overlays/default.nix)
     (rust-overlay.overlays.default)
+    (haskellNix.overlay)
   ];
 }
