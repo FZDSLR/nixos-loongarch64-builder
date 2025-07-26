@@ -108,6 +108,7 @@
     cachix-la =
       (self.haskell-nix.hackage-package {
         compiler-nix-name = "ghc9122";
+        version = "1.7.9";
         name = "cachix";
       }).components.exes.cachix;
   }
