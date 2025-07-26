@@ -104,5 +104,11 @@
         }
       else
         super.cargo-auditable-cargo-wrapper;
+
+    cachix-la =
+      (self.haskell-nix.hackage-package {
+        compiler-nix-name = "ghc9122";
+        name = "cachix";
+      }).components.exes.cachix;
   }
 )
