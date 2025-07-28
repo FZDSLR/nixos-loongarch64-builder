@@ -117,10 +117,60 @@
           super.haskellPackages.ghc;
       overrides = self.lib.composeExtensions (old.overrides or (_: _: { })) (
         hself: hsuper: {
-          remote-iserv = hself.callPackage ../packages/remote-iserv.nix { };
           iserv = hself.callPackage ../packages/iserv.nix { };
         }
       );
     });
+
+    qemu-iserv-wrapper = super.writeShellScriptBin "qemu-iserv-wrapper" ''
+      #!${super.runtimeShell}
+
+      ISERV_BIN="${self.pkgsHostTarget.haskellPackages-la.iserv}/bin/remote-iserv"
+
+      SYSROOT=${self.pkgsHostTarget.haskellPackages-la.iserv.stdenv.cc.libc}
+
+      exec ${super.pkgsBuildHost.qemu-user}/bin/qemu-loongarch64 -L "$SYSROOT" "$ISERV_BIN" "$@"
+    '';
+
+    wrappedGHC =
+      self.pkgsBuildHost.runCommand "ghc-wrapped"
+        {
+          nativeBuildInputs = [ super.pkgsBuildHost.makeWrapper ];
+          passthru = self.haskellPackages-la.ghc.passthru or { } // {
+            version = self.haskellPackages-la.ghc.version;
+            isGhcjs = false;
+            enableShared = self.haskellPackages.ghc.enableShared or true;
+          };
+        }
+        ''
+          mkdir -p $out/bin
+
+          makeWrapper ${self.haskellPackages-la.ghc}/bin/ghc $out/bin/ghc \
+            --add-flags "-fexternal-interpreter" \
+            --add-flags "-pgmi ${self.qemu-iserv-wrapper}/bin/iserv-wrapper" \
+
+          for tool in ${self.haskellPackages-la.ghc}/bin/*; do
+            if [[ $(basename "$tool") != "ghc" ]]; then
+              ln -s "$tool" $out/bin/
+            fi
+          done
+
+          ln -s ${self.haskellPackages-la.ghc}/lib $out/lib
+          ln -s ${self.haskellPackages-la.ghc}/share $out/share
+          ln -s ${self.haskellPackages-la.ghc}/include $out/include
+
+          if [ -e ${self.haskellPackages-la.ghc}/package.conf.d ]; then
+            ln -s ${self.haskellPackages-la.ghc}/package.conf.d $out/package.conf.d
+          fi
+        '';
+
+    haskellPackages-la-wrapped = self.haskellPackages-la.override (old: {
+      overrides = self.lib.composeExtensions (old.overrides or (_: _: { })) (
+        hself: hsuper: {
+          ghc = self.wrappedGHC;
+        }
+      );
+    });
+
   }
 )
