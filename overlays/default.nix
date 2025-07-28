@@ -105,7 +105,7 @@
       else
         super.cargo-auditable-cargo-wrapper;
 
-    haskellPackages-la = super.haskellPackages.override {
+    haskellPackages-la = super.haskellPackages.override (old: {
       ghc =
         if isCrossTarget then
           super.haskellPackages.ghc.override {
@@ -115,6 +115,11 @@
           }
         else
           super.haskellPackages.ghc;
-    };
+      overrides = self.lib.composeExtensions (old.overrides or (_: _: { })) (
+        hself: hsuper: {
+          remote-iserv = hself.callPackage ../packages/remote-iserv.nix {};
+        }
+      );
+    });
   }
 )
