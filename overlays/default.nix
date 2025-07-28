@@ -117,7 +117,8 @@
           super.haskellPackages.ghc;
       overrides = self.lib.composeExtensions (old.overrides or (_: _: { })) (
         hself: hsuper: {
-          remote-iserv = hself.callPackage ../packages/remote-iserv.nix {};
+          remote-iserv = hself.callPackage ../packages/remote-iserv.nix { };
+          iserv = hself.callPackage ../packages/iserv.nix { };
         }
       );
     });
