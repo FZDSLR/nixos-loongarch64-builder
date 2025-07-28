@@ -145,12 +145,12 @@
         ''
           mkdir -p $out/bin
 
-          makeWrapper ${self.haskellPackages-la.ghc}/bin/ghc $out/bin/ghc \
+          makeWrapper ${self.haskellPackages-la.ghc}/bin/loongarch64-unknown-linux-gnu-ghc $out/bin/loongarch64-unknown-linux-gnu-ghc \
             --add-flags "-fexternal-interpreter" \
             --add-flags "-pgmi ${self.qemu-iserv-wrapper}/bin/iserv-wrapper" \
 
           for tool in ${self.haskellPackages-la.ghc}/bin/*; do
-            if [[ $(basename "$tool") != "ghc" ]]; then
+            if [[ $(basename "$tool") != "loongarch64-unknown-linux-gnu-ghc" ]]; then
               ln -s "$tool" $out/bin/
             fi
           done
