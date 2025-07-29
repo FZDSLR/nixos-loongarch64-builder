@@ -126,13 +126,7 @@
     });
 
     qemu-iserv-wrapper = super.writeShellScriptBin "qemu-iserv-wrapper" ''
-      #!${super.runtimeShell}
-
-      ISERV_BIN="${self.pkgsHostTarget.haskellPackages-la.iserv}/bin/remote-iserv"
-
-      SYSROOT="${self.pkgsHostTarget.haskellPackages-la.iserv.stdenv.cc.libc}/lib"
-
-      exec ${super.pkgsBuildHost.qemu-user}/bin/qemu-loongarch64 "$ISERV_BIN" "$@"
+      exec ${super.pkgsBuildHost.qemu-user}/bin/qemu-loongarch64 "${self.pkgsHostTarget.haskellPackages-la.iserv}/bin/remote-iserv" "$@"
     '';
 
     wrappedGHC =
