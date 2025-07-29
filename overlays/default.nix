@@ -108,11 +108,21 @@
     haskellPackages-la = super.haskellPackages.override (old: {
       ghc =
         if isCrossTarget then
-          super.haskellPackages.ghc.override {
+          (super.haskellPackages.ghc.override {
             libffi = null;
             useLLVM = false;
             enableUnregisterised = true;
-          }
+          }).overrideAttrs
+            (
+              finalAttrs: previousAttrs: {
+                patches = previousAttrs.patches or [ ] ++ [
+                  (super.fetchurl {
+                    url = "https://gitlab.haskell.org/ghc/ghc/-/commit/f2b532bc5a3f9a19d128cad1eb510e1641c121a8.diff";
+                    sha256 = "0lhpwn2n63l2kv2zz1wjxw26yqrqznsxjxfncjbgldbky45f910y";
+                  })
+                ];
+              }
+            )
         else
           super.haskellPackages.ghc;
       overrides = self.lib.composeExtensions (old.overrides or (_: _: { })) (
@@ -126,7 +136,7 @@
     });
 
     qemu-iserv-wrapper = super.writeShellScriptBin "qemu-iserv-wrapper" ''
-      exec ${super.pkgsBuildHost.qemu-user}/bin/qemu-loongarch64 "${self.pkgsHostTarget.haskellPackages-la.iserv}/bin/remote-iserv" "$@"
+      exec ${super.pkgsBuildHost.qemu-user}/bin/qemu-loongarch64 "${self.pkgsHostTarget.haskellPackages-la.iserv}/bin/iserv" "$@"
     '';
 
     wrappedGHC =
