@@ -116,10 +116,11 @@
             (
               finalAttrs: previousAttrs: {
                 patches = previousAttrs.patches or [ ] ++ [
-                  (super.fetchurl {
-                    url = "https://gitlab.haskell.org/ghc/ghc/-/commit/f2b532bc5a3f9a19d128cad1eb510e1641c121a8.diff";
-                    sha256 = "0lhpwn2n63l2kv2zz1wjxw26yqrqznsxjxfncjbgldbky45f910y";
-                  })
+                 # (super.fetchurl {
+                 #   url = "https://gitlab.haskell.org/ghc/ghc/-/commit/f2b532bc5a3f9a19d128cad1eb510e1641c121a8.diff";
+                 #   sha256 = "0lhpwn2n63l2kv2zz1wjxw26yqrqznsxjxfncjbgldbky45f910y";
+                 # })
+                 (./ghc98-loong-ghci.patch)
                 ];
               }
             )
