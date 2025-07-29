@@ -132,7 +132,7 @@
 
       SYSROOT="${self.pkgsHostTarget.haskellPackages-la.iserv.stdenv.cc.libc}/lib"
 
-      exec ${super.pkgsBuildHost.qemu-user}/bin/qemu-loongarch64 -L "$SYSROOT" "$ISERV_BIN" "$@"
+      exec ${super.pkgsBuildHost.qemu-user}/bin/qemu-loongarch64 "$ISERV_BIN" "$@"
     '';
 
     wrappedGHC =
