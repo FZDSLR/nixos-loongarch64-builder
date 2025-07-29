@@ -118,6 +118,7 @@
       overrides = self.lib.composeExtensions (old.overrides or (_: _: { })) (
         hself: hsuper: {
           iserv = hself.callPackage ../packages/iserv.nix { };
+          generics-sop = super.haskell.lib.appendBuildFlags hsuper.generics-sop ["--ghc-options=\"-fexternal-interpreter -pgmi ${self.qemu-iserv-wrapper}/bin/iserv-wrapper\""];
         }
       );
     });
