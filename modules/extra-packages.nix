@@ -82,8 +82,6 @@
       })
 
       podman
-
-      haskellPackages-la.ghc
     ];
     description = "Other packages";
   };
