@@ -119,7 +119,7 @@
         hself: hsuper: {
           iserv = super.haskell.lib.justStaticExecutables (hself.callPackage ../packages/iserv.nix { });
           generics-sop = super.haskell.lib.appendBuildFlags hsuper.generics-sop [
-            "--ghc-options=\"-fexternal-interpreter -pgmi ${self.qemu-iserv-wrapper}/bin/iserv-wrapper\""
+            "--ghc-options=\"-fexternal-interpreter -pgmi ${self.qemu-iserv-wrapper}/bin/qemu-iserv-wrapper\""
           ];
         }
       );
@@ -150,7 +150,7 @@
 
           makeWrapper ${self.haskellPackages-la.ghc}/bin/loongarch64-unknown-linux-gnu-ghc $out/bin/loongarch64-unknown-linux-gnu-ghc \
             --add-flags "-fexternal-interpreter" \
-            --add-flags "-pgmi ${self.qemu-iserv-wrapper}/bin/iserv-wrapper" \
+            --add-flags "-pgmi ${self.qemu-iserv-wrapper}/bin/qemu-iserv-wrapper" \
 
           for tool in ${self.haskellPackages-la.ghc}/bin/*; do
             if [[ $(basename "$tool") != "loongarch64-unknown-linux-gnu-ghc" ]]; then
