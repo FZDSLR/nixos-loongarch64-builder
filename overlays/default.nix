@@ -128,7 +128,7 @@
 
       ISERV_BIN="${self.pkgsHostTarget.haskellPackages-la.iserv}/bin/remote-iserv"
 
-      SYSROOT=${self.pkgsHostTarget.haskellPackages-la.iserv.stdenv.cc.libc}
+      SYSROOT="${self.pkgsHostTarget.haskellPackages-la.iserv.stdenv.cc.libc}/lib"
 
       exec ${super.pkgsBuildHost.qemu-user}/bin/qemu-loongarch64 -L "$SYSROOT" "$ISERV_BIN" "$@"
     '';
