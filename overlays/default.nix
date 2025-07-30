@@ -117,8 +117,8 @@
               finalAttrs: previousAttrs: {
                 patches = previousAttrs.patches or [ ] ++ [
                  (super.fetchurl {
-                   url = "https://raw.githubusercontent.com/loongson-community/nixpkgs/17acac4db46d81ab345570d1e629bc14c9e1e8d7/pkgs/development/compilers/ghc/0002-configure-Bump-max-LLVM-version-to-19.patch";
-                   sha256 = "00gdni8dljjd2b8a7g0mjmacjwr922gzmkarhbwyf6nzvd0177z5";
+                   url = "https://github.com/loongson-community/nixpkgs/blob/17acac4db46d81ab345570d1e629bc14c9e1e8d7/pkgs/development/compilers/ghc/0003-hadrian-Enable-GHCi-on-all-platforms.patch";
+                   sha256 = "123gqskwprnds2j6bpmsz6b0z7csk4i3znjfi92l7wkfv118dpar";
                  })
                 ];
               }
