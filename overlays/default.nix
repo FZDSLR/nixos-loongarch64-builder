@@ -136,9 +136,9 @@
       );
     });
 
-    qemu-iserv-wrapper = super.writeShellScriptBin "qemu-iserv-wrapper" ''
+    qemu-iserv-wrapper = super.pkgsBuildHost.writeShellScriptBin "qemu-iserv-wrapper" ''
       set -euo pipefail
-      exec ${super.pkgsBuildHost.qemu-user}/bin/qemu-loongarch64 "${self.pkgsHostTarget.haskellPackages-la.ghc}/lib/${self.pkgsHostTarget.haskellPackages-la.ghc.targetPrefix}ghc-${self.pkgsHostTarget.haskellPackages-la.ghc.version}/bin/ghc-iserv" "$@"
+      exec ${super.pkgsBuildHost.qemu-user}/bin/qemu-loongarch64 "${self.pkgsHostTarget.haskellPackages-la.ghc}/lib/${self.pkgsHostTarget.haskellPackages-la.ghc.targetPrefix}ghc-${self.haskellPackages-la.ghc.version}/bin/ghc-iserv" "$@"
     '';
 
     wrappedGHC =
