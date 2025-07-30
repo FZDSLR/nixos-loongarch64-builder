@@ -116,11 +116,10 @@
             (
               finalAttrs: previousAttrs: {
                 patches = previousAttrs.patches or [ ] ++ [
-                 # (super.fetchurl {
-                 #   url = "https://gitlab.haskell.org/ghc/ghc/-/commit/f2b532bc5a3f9a19d128cad1eb510e1641c121a8.diff";
-                 #   sha256 = "0lhpwn2n63l2kv2zz1wjxw26yqrqznsxjxfncjbgldbky45f910y";
-                 # })
-                 (./ghc98-loong-ghci.patch)
+                 (super.fetchurl {
+                   url = "https://raw.githubusercontent.com/loongson-community/nixpkgs/17acac4db46d81ab345570d1e629bc14c9e1e8d7/pkgs/development/compilers/ghc/0002-configure-Bump-max-LLVM-version-to-19.patch";
+                   sha256 = "00gdni8dljjd2b8a7g0mjmacjwr922gzmkarhbwyf6nzvd0177z5";
+                 })
                 ];
               }
             )
