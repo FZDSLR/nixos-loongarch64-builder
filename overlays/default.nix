@@ -117,8 +117,8 @@
               finalAttrs: previousAttrs: {
                 patches = previousAttrs.patches or [ ] ++ [
                  (super.fetchurl {
-                   url = "https://github.com/loongson-community/nixpkgs/blob/17acac4db46d81ab345570d1e629bc14c9e1e8d7/pkgs/development/compilers/ghc/0003-hadrian-Enable-GHCi-on-all-platforms.patch";
-                   sha256 = "123gqskwprnds2j6bpmsz6b0z7csk4i3znjfi92l7wkfv118dpar";
+                   url = "https://raw.githubusercontent.com/loongson-community/nixpkgs/17acac4db46d81ab345570d1e629bc14c9e1e8d7/pkgs/development/compilers/ghc/0003-hadrian-Enable-GHCi-on-all-platforms.patch";
+                   sha256 = "1q8yw2dvgfrfbwmdk2579scvg4bc7ypzs4a45pvcnnbi29px3mgf";
                  })
                 ];
               }
