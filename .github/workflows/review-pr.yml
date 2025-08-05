@@ -1,0 +1,114 @@
+name: Build Packages with Patches
+
+run-name: Apply PR ${{ github.event.inputs.pr_number }} and build packages
+
+on:
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'PR number to apply'
+        required: true
+        type: number
+      package_name:
+        description: 'Package name to build'
+        required: true
+        type: string
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      patch_hash: ${{ steps.hash.outputs.value }}
+    steps:
+    - name: Checkout nixpkgs unstable
+      uses: actions/checkout@v4
+      with:
+        repository: NixOS/nixpkgs
+        ref: nixpkgs-unstable
+        path: nixpkgs
+
+    - name: Apply PR patch
+      run: |
+        cd nixpkgs
+        curl -L "https://patch-diff.githubusercontent.com/raw/NixOS/nixpkgs/pull/${{ github.event.inputs.pr_number }}.patch" > pr.patch
+        git apply --reject --whitespace=fix pr.patch || echo "Applying patch with possible minor conflicts"
+        git diff > patch.diff
+      working-directory: ./
+
+    - name: Generate patch hash
+      id: hash
+      run: |
+        cd nixpkgs
+        sha256sum patch.diff | awk '{print $1}' > patch_hash
+        echo "value=$(cat patch_hash)" >> $GITHUB_OUTPUT
+
+  build:
+    needs: prepare
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        system: [x86_64-linux, riscv64-linux, loongarch64-linux, aarch64-linux]
+
+    steps:
+    - name: Restore nixpkgs with patch
+      uses: actions/checkout@v4
+      with:
+        repository: NixOS/nixpkgs
+        ref: master
+        path: nixpkgs
+
+    - name: Apply cached patch
+      run: |
+        cd nixpkgs
+        echo "Downloading patch..."
+        curl -L "https://github.com/NixOS/nixpkgs/pull/${{ github.event.inputs.pr_number }}.patch" > pr.patch
+        git apply --reject --whitespace=fix pr.patch
+      working-directory: ./
+
+    - name: Install Nix
+      uses: cachix/install-nix-action@v27
+
+    - name: Build package
+      continue-on-error: true
+      run: |
+        case "${{ matrix.system }}" in
+          x86_64-linux)
+            attr_path="${{ github.event.inputs.package_name }}"
+            ;;
+          riscv64-linux)
+            attr_path="pkgsCross.riscv64.${{ github.event.inputs.package_name }}"
+            ;;
+          loongarch64-linux)
+            attr_path="pkgsCross.loongarch64-linux.${{ github.event.inputs.package_name }}"
+            ;;
+          aarch64-linux)
+            attr_path="pkgsCross.aarch64-multiplatform.${{ github.event.inputs.package_name }}"
+            ;;
+          *)
+            echo "Unsupported system: ${{ matrix.system }}"
+            exit 1
+            ;;
+        esac
+
+        nix-build \
+          --argstr system "${{ matrix.system }}" \
+          -I nixpkgs=./nixpkgs \
+          -E "with import <nixpkgs> {}; $attr_path" \
+          --show-trace
+
+        mkdir -p results/${{ matrix.system }}
+        cp -L result* results/${{ matrix.system }} || true
+      working-directory: ./
+
+  report:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - name: Show build status
+      run: |
+        echo "Build status per architecture:"
+        echo "x86_64-linux: ${{ needs.build.result == 'success' && 'SUCCESS' || 'FAILURE' }}"
+        echo "riscv64-linux: ${{ contains(needs.build.outputs.riscv64_status, 'success') && 'SUCCESS' || 'FAILURE' }}"
+        echo "loongarch64-linux: ${{ contains(needs.build.outputs.loongarch64_status, 'success') && 'SUCCESS' || 'FAILURE' }}"
+        echo "aarch64-linux: ${{ contains(needs.build.outputs.aarch64_status, 'success') && 'SUCCESS' || 'FAILURE' }}"
