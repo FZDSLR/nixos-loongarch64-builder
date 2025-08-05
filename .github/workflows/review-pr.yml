@@ -100,15 +100,3 @@ jobs:
         mkdir -p results/${{ matrix.system }}
         cp -L result* results/${{ matrix.system }} || true
       working-directory: ./
-
-  report:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-    - name: Show build status
-      run: |
-        echo "Build status per architecture:"
-        echo "x86_64-linux: ${{ needs.build.result == 'success' && 'SUCCESS' || 'FAILURE' }}"
-        echo "riscv64-linux: ${{ contains(needs.build.outputs.riscv64_status, 'success') && 'SUCCESS' || 'FAILURE' }}"
-        echo "loongarch64-linux: ${{ contains(needs.build.outputs.loongarch64_status, 'success') && 'SUCCESS' || 'FAILURE' }}"
-        echo "aarch64-linux: ${{ contains(needs.build.outputs.aarch64_status, 'success') && 'SUCCESS' || 'FAILURE' }}"
