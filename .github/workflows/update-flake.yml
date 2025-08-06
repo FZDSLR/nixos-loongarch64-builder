@@ -9,23 +9,78 @@ permissions:
 
 jobs:
   update-flake:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
+      - name: Maximize build space
+        uses: easimon/maximize-build-space@v10
+        with:
+          root-reserve-mb: 24576
+          swap-size-mb: 16384
+          remove-dotnet: 'true'
+          remove-android: 'true'
+          remove-haskell: 'true'
+          remove-codeql: 'true'
+          remove-docker-images: 'true'
+          build-mount-path: '/nix'
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - uses: nixbuild/nix-quick-install-action@v32
+        with:
+          nix_conf: |
+            keep-env-derivations = true
+            keep-outputs = true
+            sandbox = true
+
+      - name: Restore and save Nix store
+        uses: nix-community/cache-nix-action@v6
+        with:
+          primary-key: nix-${{ runner.os }}-${{ hashFiles('**/*.nix', '**/flake.lock') }}
+          restore-prefixes-first-match: nix-${{ runner.os }}-
+          gc-max-store-size-linux: 8G
+          purge: true
+          purge-prefixes: nix-${{ runner.os }}-
+          purge-created: 0
+          purge-last-accessed: 0
+          purge-primary-key: never
+
+      - name: Configure Cachix
+        uses: cachix/cachix-action@v14
+        with:
+          name: loongarch64-cross-test
+          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
+
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
           token: ${{ secrets.PAT }}
 
-      - name: Install Nix
-        uses: DeterminateSystems/nix-installer-action@v4
-        with:
-          extra-conf: |
-            experimental-features = nix-command flakes
-            system-features = recursive-nix
-
       - name: Update flake.lock
         run: nix flake update
+
+      - name: Git add all
+        run: git add --all
+
+      - name: Build system packages for Loongarch64
+        run: |
+          ./build.sh environment.systemPackages
+
+      - name: Build base cli packages for Loongarch64
+        run: |
+          ./build.sh pkgSet.baseCliPackages
+
+      - name: Build kernels for Loongarch64
+        run: |
+          ./build.sh pkgSet.kernelPackages
+
+      - name: Build python packages for Loongarch64
+        run: |
+          ./build.sh pkgSet.pythonPackages
+
+      - name: Build other packages for Loongarch64
+        run: |
+          ./build.sh pkgSet.otherPackages
 
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v5
