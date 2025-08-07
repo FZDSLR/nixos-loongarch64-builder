@@ -77,9 +77,7 @@
     default = with pkgs; [
       webdav
 
-      (ffmpeg.override {
-        withSdl2 = false;
-      })
+      ffmpeg
 
       podman
     ];
