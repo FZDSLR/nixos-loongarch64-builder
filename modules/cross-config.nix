@@ -13,6 +13,13 @@
       name = "loong64";
       target = "uImage";
     };
+    rust = {
+      platform = builtins.fromJSON (
+        builtins.readFile "${../rust}/loongarch64_nosimd-unknown-gnu.json"
+      );
+      rustcTargetSpec = "${../rust}/loongarch64_nosimd-unknown-gnu.json";
+      rustcTarget = "loongarch64_nosimd-unknown-gnu.json";
+    };
   };
   nixpkgs.overlays = [
     (import ../overlays/default.nix)

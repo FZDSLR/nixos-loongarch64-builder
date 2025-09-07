@@ -95,38 +95,6 @@
       }
     );
 
-    rustPlatform_1_83 = super.makeRustPlatform {
-      cargo = self.buildPackages.rust-bin.stable."1.83.0".minimal;
-      rustc = self.buildPackages.rust-bin.stable."1.83.0".minimal;
-    };
-
-    rustPlatform = if isCross then self.rustPlatform_1_83 else super.rustPlatform;
-
-    cargo =
-      if isCrossTarget then
-        self.buildPackages.rust-bin.stable."1.83.0".minimal.override {
-          targets = [ "loongarch64-unknown-linux-gnu" ];
-        }
-      else
-        super.cargo;
-    rustc =
-      if isCrossTarget then
-        self.buildPackages.rust-bin.stable."1.83.0".minimal.override {
-          targets = [ "loongarch64-unknown-linux-gnu" ];
-        }
-      else
-        super.rustc;
-
-    cargo-auditable-cargo-wrapper =
-      if isCrossTarget then
-        super.cargo-auditable-cargo-wrapper.override {
-          cargo = self.buildPackages.rust-bin.stable."1.83.0".minimal.override {
-            targets = [ "loongarch64-unknown-linux-gnu" ];
-          };
-        }
-      else
-        super.cargo-auditable-cargo-wrapper;
-
     haskellPackages-la = super.haskellPackages.override {
       ghc =
         if isCrossTarget then
