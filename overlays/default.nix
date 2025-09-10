@@ -29,6 +29,19 @@
             "tools/mkimage"
             "tools/env/fw_printenv"
           ];
+          installPhase = ''
+            runHook preInstall
+
+            mkdir -p $out/bin
+            cp ${super.lib.concatStringsSep " " (finalAttrs.filesToInstall)} $out/bin
+
+            mkdir -p "$out/bin/nix-support"
+            ${super.lib.concatMapStrings (file: ''
+              echo "file binary-dist $out/bin/${builtins.baseNameOf file}" >> "$out/bin/nix-support/hydra-build-products"
+            '') (finalAttrs.filesToInstall)}
+
+            runHook postInstall
+          '';
         }
       )
     );
