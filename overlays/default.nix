@@ -20,6 +20,15 @@
             sha256 = "sha256-OpPOCVR5eel0U3wenBNaRmaMEv7WYbBiWZfexEfo+Dw=";
           };
           patches = [ ];
+          # Since https://github.com/NixOS/nixpkgs/commit/ebf43d4c4a50beba220015cd70239a56f7fa6360
+          filesToInstall = [
+            "tools/dumpimage"
+            "tools/fdtgrep"
+            "tools/kwboot"
+            "tools/mkenvimage"
+            "tools/mkimage"
+            "tools/env/fw_printenv"
+          ];
         }
       )
     );
