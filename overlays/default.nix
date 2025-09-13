@@ -106,5 +106,29 @@
         else
           super.haskellPackages.ghc;
     };
+
+    fish = super.fish.overrideAttrs (oldAttrs: {
+      cmakeFlags =
+        let
+          # 过滤掉所有形式的 Rust_CARGO_TARGET 标志
+          filteredFlags = builtins.filter (
+            flag:
+            if builtins.isString flag then
+              let
+                # 检查是否以 -DRust_CARGO_TARGET 开头
+                isRustFlag = builtins.substring 0 19 flag == "-DRust_CARGO_TARGET";
+              in
+              !isRustFlag
+            else
+              true
+          ) oldAttrs.cmakeFlags;
+
+          # 生成新的 Rust_CARGO_TARGET 标志
+          newRustFlag = (
+            super.lib.cmakeFeature "Rust_CARGO_TARGET" super.stdenv.hostPlatform.rust.rustcTargetSpec
+          );
+        in
+        filteredFlags ++ [ newRustFlag ];
+    });
   }
 )
