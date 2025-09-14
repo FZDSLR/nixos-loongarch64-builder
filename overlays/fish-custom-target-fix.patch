@@ -1,0 +1,30 @@
+From 78c30be5c40eb046de69cd7c53a66d6a4aded710 Mon Sep 17 00:00:00 2001
+From: fzdslr-nw <fzdslr@qq.com>
+Date: Sun, 14 Sep 2025 03:34:40 +0000
+Subject: [PATCH] fix: handle custom target paths in Rust.cmake
+
+---
+ cmake/Rust.cmake | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/cmake/Rust.cmake b/cmake/Rust.cmake
+index 9cdd01c..2d39cb4 100644
+--- a/cmake/Rust.cmake
++++ b/cmake/Rust.cmake
+@@ -13,7 +13,12 @@ if(DEFINED TSAN)
+ endif()
+ 
+ if (Rust_CARGO_TARGET)
+-    set(rust_target_dir "${FISH_RUST_BUILD_DIR}/${Rust_CARGO_TARGET}")
++    if (Rust_CARGO_TARGET MATCHES "\\.json$")
++        get_filename_component(TARGET_NAME "${Rust_CARGO_TARGET}" NAME_WE)
++        set(rust_target_dir "${FISH_RUST_BUILD_DIR}/${TARGET_NAME}")
++    else()
++        set(rust_target_dir "${FISH_RUST_BUILD_DIR}/${Rust_CARGO_TARGET}")
++    endif()
+ else()
+     set(rust_target_dir "${FISH_RUST_BUILD_DIR}/${Rust_CARGO_HOST_TARGET}")
+ endif()
+-- 
+2.49.0
+
