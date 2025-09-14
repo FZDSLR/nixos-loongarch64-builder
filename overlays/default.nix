@@ -129,6 +129,9 @@
           );
         in
         filteredFlags ++ [ newRustFlag ];
+      patches = (oldAttrs.patches or [ ]) ++ [
+        ./fish-custom-target-fix.patch
+      ];
     });
   }
 )
