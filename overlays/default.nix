@@ -133,5 +133,24 @@
         ./fish-custom-target-fix.patch
       ];
     });
+
+    librsvg = super.librsvg.overrideAttrs (oldAttrs: {
+      mesonFlags =
+        let
+          filteredFlags = builtins.filter (
+            flag:
+            if builtins.isString flag then
+              let
+                isRustFlag = builtins.substring 0 9 flag == "-Dtriplet";
+              in
+              !isRustFlag
+            else
+              true
+          ) oldAttrs.mesonFlags;
+
+          newRustFlag = ("-Dtriplet=${super.stdenv.hostPlatform.rust.rustcTargetSpec}");
+        in
+        filteredFlags ++ [ newRustFlag ];
+    });
   }
 )
