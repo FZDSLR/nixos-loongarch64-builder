@@ -15,10 +15,10 @@
     };
     rust = {
       platform = builtins.fromJSON (
-        builtins.readFile "${../rust}/loongarch64_nosimd-unknown-linux-gnu.json"
+        builtins.readFile "${../rust}/loongarch64-unknown-linux-gnu+nosimd.json"
       );
-      rustcTargetSpec = "${../rust}/loongarch64_nosimd-unknown-linux-gnu.json";
-      rustcTarget = "loongarch64_nosimd-unknown-linux-gnu";
+      rustcTargetSpec = "${../rust}/loongarch64-unknown-linux-gnu+nosimd.json";
+      rustcTarget = "loongarch64-unknown-linux-gnu+nosimd";
     };
   };
   nixpkgs.overlays = [
