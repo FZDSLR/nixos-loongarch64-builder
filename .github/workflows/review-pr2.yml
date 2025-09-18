@@ -1,6 +1,6 @@
 name: Build Packages with custom Patches
 
-run-name: Apply patch from ${{ github.event.inputs.patch_path }} and build packages
+run-name: Apply patch from ${{ github.event.inputs.patch_path }} on ${{ github.event.inputs.base_branch }} and build packages
 
 on:
   workflow_dispatch:
@@ -13,6 +13,11 @@ on:
         description: 'Package name to build'
         required: true
         type: string
+      base_branch:
+        description: 'Base nixpkgs branch to use'
+        required: true
+        type: string
+        default: 'nixpkgs-unstable'
 
 jobs:
   prepare:
@@ -20,11 +25,11 @@ jobs:
     outputs:
       patch_hash: ${{ steps.hash.outputs.value }}
     steps:
-    - name: Checkout nixpkgs unstable
+    - name: Checkout nixpkgs
       uses: actions/checkout@v4
       with:
         repository: NixOS/nixpkgs
-        ref: nixpkgs-unstable
+        ref: ${{ github.event.inputs.base_branch }}
         path: nixpkgs
 
     - name: Apply patch
@@ -55,7 +60,7 @@ jobs:
       uses: actions/checkout@v4
       with:
         repository: NixOS/nixpkgs
-        ref: master
+        ref: ${{ github.event.inputs.base_branch }}
         path: nixpkgs
 
     - name: Apply cached patch
