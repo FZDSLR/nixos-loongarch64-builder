@@ -76,9 +76,6 @@
     type = with lib.types; listOf package;
     default = with pkgs; [
       webdav
-
-      ffmpeg
-
       podman
     ];
     description = "Other packages";
