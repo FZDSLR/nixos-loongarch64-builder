@@ -15,9 +15,9 @@
     };
     rust = {
       platform = builtins.fromJSON (
-        builtins.readFile "${../rust}/loongarch64-unknown-linux-gnu.json"
+        builtins.readFile "${../rust}/loongarch64-unknown-linux-gnu"
       );
-      rustcTargetSpec = "${../rust}/loongarch64-unknown-linux-gnu.json";
+      rustcTargetSpec = "${../rust}/loongarch64-unknown-linux-gnu";
       rustcTarget = "loongarch64_nosimd-unknown-linux-gnu";
     };
   };
