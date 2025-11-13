@@ -95,38 +95,6 @@
       }
     );
 
-    rustPlatform_1_83 = super.makeRustPlatform {
-      cargo = self.buildPackages.rust-bin.stable."1.83.0".minimal;
-      rustc = self.buildPackages.rust-bin.stable."1.83.0".minimal;
-    };
-
-    rustPlatform = if isCross then self.rustPlatform_1_83 else super.rustPlatform;
-
-    cargo =
-      if isCrossTarget then
-        self.buildPackages.rust-bin.stable."1.83.0".minimal.override {
-          targets = [ "loongarch64-unknown-linux-gnu" ];
-        }
-      else
-        super.cargo;
-    rustc =
-      if isCrossTarget then
-        self.buildPackages.rust-bin.stable."1.83.0".minimal.override {
-          targets = [ "loongarch64-unknown-linux-gnu" ];
-        }
-      else
-        super.rustc;
-
-    cargo-auditable-cargo-wrapper =
-      if isCrossTarget then
-        super.cargo-auditable-cargo-wrapper.override {
-          cargo = self.buildPackages.rust-bin.stable."1.83.0".minimal.override {
-            targets = [ "loongarch64-unknown-linux-gnu" ];
-          };
-        }
-      else
-        super.cargo-auditable-cargo-wrapper;
-
     haskellPackages-la = super.haskellPackages.override {
       ghc =
         if isCrossTarget then
@@ -138,5 +106,51 @@
         else
           super.haskellPackages.ghc;
     };
+
+    fish = super.fish.overrideAttrs (oldAttrs: {
+      cmakeFlags =
+        let
+          # 过滤掉所有形式的 Rust_CARGO_TARGET 标志
+          filteredFlags = builtins.filter (
+            flag:
+            if builtins.isString flag then
+              let
+                # 检查是否以 -DRust_CARGO_TARGET 开头
+                isRustFlag = builtins.substring 0 19 flag == "-DRust_CARGO_TARGET";
+              in
+              !isRustFlag
+            else
+              true
+          ) oldAttrs.cmakeFlags;
+
+          # 生成新的 Rust_CARGO_TARGET 标志
+          newRustFlag = (
+            super.lib.cmakeFeature "Rust_CARGO_TARGET" super.stdenv.hostPlatform.rust.rustcTargetSpec
+          );
+        in
+        filteredFlags ++ [ newRustFlag ];
+      patches = (oldAttrs.patches or [ ]) ++ [
+        ./fish-custom-target-fix.patch
+      ];
+    });
+
+    librsvg = super.librsvg.overrideAttrs (oldAttrs: {
+      mesonFlags =
+        let
+          filteredFlags = builtins.filter (
+            flag:
+            if builtins.isString flag then
+              let
+                isRustFlag = builtins.substring 0 9 flag == "-Dtriplet";
+              in
+              !isRustFlag
+            else
+              true
+          ) oldAttrs.mesonFlags;
+
+          newRustFlag = ("-Dtriplet=${super.stdenv.hostPlatform.rust.rustcTargetSpec}");
+        in
+        filteredFlags ++ [ newRustFlag ];
+    });
   }
 )
