@@ -18,7 +18,8 @@
         builtins.readFile "${../rust}/loongarch64-unknown-linux-gnu.json"
       );
       rustcTargetSpec = "${../rust}/loongarch64-unknown-linux-gnu.json";
-      rustcTarget = "loongarch64_nosimd-unknown-linux-gnu";
+      cargoShortTarget = "loongarch64-unknown-linux-gnu";
+      rustcTarget = "loongarch64-unknown-linux-gnu";
     };
   };
   nixpkgs.overlays = [

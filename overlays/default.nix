@@ -151,6 +151,19 @@
           newRustFlag = ("-Dtriplet=${super.stdenv.hostPlatform.rust.rustcTargetSpec}");
         in
         filteredFlags ++ [ newRustFlag ];
+      patches = (oldAttrs.patches or [ ]) ++ [
+        ./librsvg_fix_target_dir.patch
+      ];
     });
+
+    cargo-c =
+      if isCrossTarget then
+        super.cargo-c.overrideAttrs (oldAttrs: {
+          patches = (oldAttrs.patches or [ ]) ++ [
+            ./cargo-c-fix-json-path.patch
+          ];
+        })
+      else
+        super.cargo-c;
   }
 )
