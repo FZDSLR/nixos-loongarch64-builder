@@ -9,7 +9,6 @@
   "features": "+f,+d",
   "has-rpath": true,
   "has-thread-local": true,
-  "is-builtin": true,
   "linker-flavor": "gnu-cc",
   "llvm-abiname": "lp64d",
   "llvm-target": "loongarch64-unknown-linux-gnu",

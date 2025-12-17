@@ -1,0 +1,26 @@
+diff --git a/src/build.rs b/src/build.rs
+index d560fd1..da7f512 100644
+--- a/src/build.rs
++++ b/src/build.rs
+@@ -1160,11 +1160,20 @@ pub fn cbuild(
+     let mut compile_opts = compile_options(ws, config, args, profile, UserIntent::Build)?;
+ 
+     // TODO: there must be a simpler way to get the right path.
++    let target_name = if target.ends_with(".json") {
++        Path::new(&target)
++        .file_stem()
++        .and_then(|s| s.to_str())
++        .unwrap_or(&target)
++    } else {
++        &target
++    };
++
+     let root_output = ws
+         .target_dir()
+         .as_path_unlocked()
+         .to_path_buf()
+-        .join(PathBuf::from(target))
++        .join(PathBuf::from(target_name))
+         .join(profiles.get_dir_name());
+ 
+     let mut members = Vec::new();

@@ -1,0 +1,32 @@
+diff --git a/meson/cargo_wrapper.py b/meson/cargo_wrapper.py
+index 5f1761c..8137aab 100755
+--- a/meson/cargo_wrapper.py
++++ b/meson/cargo_wrapper.py
+@@ -110,11 +110,26 @@ cargo_target_dir = Path(args.project_build_root) / "target"
+ # The final rsvg-convert executable will be found in cargo_target_dir/$(TARGET_TRIPLET)
+ # if a target triplet is specified
+ if args.target:
+-    cargo_target_output_dir = cargo_target_dir / args.target
++    target_path = Path(args.target)
++    if (target_path.suffix == '.json'):
++        target_name = target_path.stem
++        cargo_target_output_dir = cargo_target_dir / target_name
++    else:
++        cargo_target_output_dir = cargo_target_dir / args.target
+ else:
+     cargo_target_output_dir = cargo_target_dir
+ 
+ env = os.environ.copy()
++
++if args.target and Path(args.target).suffix == '.json':
++    target_path = Path(args.target)
++    rust_target_path = [target_path.parent.as_posix()]
++    existing_path = env.get("RUST_TARGET_PATH", "")
++    if existing_path:
++        rust_target_path.append(existing_path)
++    env["RUST_TARGET_PATH"] = os.pathsep.join(rust_target_path)
++#    args.target = target_path.stem
++
+ pkg_config_path = [i for i in env.get("PKG_CONFIG_PATH", "").split(os.pathsep) if i]
+ pkg_config_path.insert(
+     0, (Path(args.project_build_root) / "meson-uninstalled").as_posix()
