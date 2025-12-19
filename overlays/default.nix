@@ -4,10 +4,6 @@
   let
     isCross = super.stdenv.buildPlatform != super.stdenv.hostPlatform;
     isCrossTarget = super.stdenv.buildPlatform != super.stdenv.targetPlatform;
-    libressl-loongarch64Conf = super.fetchurl {
-      url = "https://raw.githubusercontent.com/libressl-portable/portable/v4.1.0/include/arch/loongarch64/opensslconf.h";
-      sha256 = "02l6h1qqrbzmdk10ybzs0m8v9ps72cg32hm737x5rjwlrkk71izb";
-    };
   in
   {
     ubootTools = (
