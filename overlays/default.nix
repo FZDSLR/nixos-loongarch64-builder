@@ -161,5 +161,22 @@
         })
       else
         super.cargo-c;
+
+    libimagequant =
+      if isCross then
+        super.libimagequant.overrideAttrs (oldAttrs: {
+          postBuild = ''
+            pushd imagequant-sys
+            ${super.buildPackages.rust.envVars.setEnv} cargo cbuild --release --frozen --prefix=${placeholder "out"} --target ${super.stdenv.hostPlatform.rust.rustcTargetSpec}
+            popd
+          '';
+          postInstall = ''
+            pushd imagequant-sys
+            ${super.buildPackages.rust.envVars.setEnv} cargo cinstall --release --frozen --prefix=${placeholder "out"} --target ${super.stdenv.hostPlatform.rust.rustcTargetSpec}
+            popd
+          '';
+          })
+      else
+        super.libimagequant;
   }
 )
