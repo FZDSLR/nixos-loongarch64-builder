@@ -1,0 +1,19 @@
+diff --git a/arch/loongarch/kernel/setup.c b/arch/loongarch/kernel/setup.c
+index 320ea3461..c935e8f18 100644
+--- a/arch/loongarch/kernel/setup.c
++++ b/arch/loongarch/kernel/setup.c
+@@ -299,12 +299,14 @@ static void __init arch_reserve_crashkernel(void)
+ char *board_names[] = {
+ 	"LS2K300-ATK-DL2K0300B-V01",
+ 	"LS2K300-99PI-WIFI",
++	"LS2K300-99PI-TF",
+ 	NULL
+ };
+ 
+ void *fdts[] = {
+ 	&__dtb_loongson_2k0300_alientek_begin,
+ 	&__dtb_loongson_2k0300_ctcisz_forever_pi_begin,
++	&__dtb_loongson_2k0300_ctcisz_forever_pi_begin,
+ 	NULL
+ };
+ 

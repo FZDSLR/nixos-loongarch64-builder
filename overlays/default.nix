@@ -52,6 +52,10 @@
       }
     );
 
+    linuxPackages_aosc_2k300 = super.linuxPackagesFor (
+      super.callPackage ../packages/linux-aosc.nix { }
+    );
+
     ubootLs99PiTF =
       (super.buildUBoot {
         defconfig = "loongson_2k300_99pi_tf_defconfig";
@@ -175,7 +179,7 @@
             ${super.buildPackages.rust.envVars.setEnv} cargo cinstall --release --frozen --prefix=${placeholder "out"} --target ${super.stdenv.hostPlatform.rust.rustcTargetSpec}
             popd
           '';
-          })
+        })
       else
         super.libimagequant;
   }
