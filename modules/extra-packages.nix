@@ -31,6 +31,7 @@
     default = with pkgs; [
       linuxPackages_6_12_2k300.kernel
       linuxPackages_6_12_2k300_rt.kernel
+      linuxPackages_aosc_2k300.kernel
     ];
     description = "kernel packages";
   };
