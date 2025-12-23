@@ -6,7 +6,7 @@
   "direct-access-external-data": false,
   "dynamic-linking": true,
   "env": "gnu",
-  "features": "+f,+d",
+  "features": "+f,+d,-lsx,-lasx",
   "has-rpath": true,
   "has-thread-local": true,
   "linker-flavor": "gnu-cc",
