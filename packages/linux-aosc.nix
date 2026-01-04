@@ -1,7 +1,7 @@
 {
   stdenv,
   fetchgit,
-  ubootTools,
+  pkgsBuildBuild,
   linuxConfig,
   linuxManualConfig,
   ...
@@ -33,7 +33,7 @@ in
     allowImportFromDerivation = true;
   }).overrideAttrs
   (old: {
-    nativeBuildInputs = old.nativeBuildInputs ++ [ ubootTools ];
+    nativeBuildInputs = old.nativeBuildInputs ++ [ pkgsBuildBuild.ubootTools ];
     patches = (old.patches or [ ]) ++ [
       ./aosc-linux-forever-pi-tf-support.patch
     ];

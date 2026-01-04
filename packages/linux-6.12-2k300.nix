@@ -3,7 +3,7 @@
   src,
   pkgs,
   stdenv,
-  ubootTools,
+  pkgsBuildBuild,
   linuxManualConfig,
   configfile ? ./loongson_2k300_config,
   ...
@@ -23,7 +23,7 @@
   allowImportFromDerivation = true;
 }).overrideAttrs
   (old: {
-    nativeBuildInputs = old.nativeBuildInputs ++ [ ubootTools ];
+    nativeBuildInputs = old.nativeBuildInputs ++ [ pkgsBuildBuild.ubootTools ];
     postPatch = ''
       substituteInPlace drivers/net/can/ls_canfd/Makefile \
         --replace 'cp $(obj)/lscanfd_dma.o_shipped' 'cp $(src)/lscanfd_dma.o_shipped' \
