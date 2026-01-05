@@ -196,11 +196,13 @@
       else
         super.brotli;
 
-    perl5Packages = super.perl5Packages // {
-      JSON = super.perl5Packages.JSON.overrideAttrs (oldAttrs: {
-        patches = (oldAttrs.patches or [ ]) ++ (
-          if isCross then [ ./JSON-41-disable-b.patch ] else [ ]
-        );
+    perl5 = super.perl5.override {
+      overrides = (pkgs: {
+        JSON = super.perl5.pkgs.JSON.overrideAttrs (oldAttrs: {
+          patches = (oldAttrs.patches or [ ]) ++ (
+            if isCross then [ ./JSON-41-disable-b.patch ] else [ ]
+          );
+        });
       });
     };
   }
