@@ -1,0 +1,110 @@
+diff --git a/lib/JSON/backportPP.pm b/lib/JSON/backportPP.pm
+index 6870697..cbdeafe 100644
+--- a/lib/JSON/backportPP.pm
++++ b/lib/JSON/backportPP.pm
+@@ -1517,51 +1517,61 @@ BEGIN {
+         *JSON::PP::reftype = \&Scalar::Util::reftype;
+         *JSON::PP::refaddr = \&Scalar::Util::refaddr;
+     }
+-    else{ # This code is from Scalar::Util.
+-        # warn $@;
+-        eval 'sub UNIVERSAL::a_sub_not_likely_to_be_here { ref($_[0]) }';
+-        *JSON::PP::blessed = sub {
+-            local($@, $SIG{__DIE__}, $SIG{__WARN__});
+-            ref($_[0]) ? eval { $_[0]->a_sub_not_likely_to_be_here } : undef;
+-        };
+-        require B;
+-        my %tmap = qw(
+-            B::NULL   SCALAR
+-            B::HV     HASH
+-            B::AV     ARRAY
+-            B::CV     CODE
+-            B::IO     IO
+-            B::GV     GLOB
+-            B::REGEXP REGEXP
+-        );
+-        *JSON::PP::reftype = sub {
+-            my $r = shift;
+-
+-            return undef unless length(ref($r));
+-
+-            my $t = ref(B::svref_2object($r));
++    else{
++        eval 'require builtin';
++        unless($@){
++            # builtin 模块可用，直接使用
++            *JSON::PP::blessed = \&builtin::blessed;
++            *JSON::PP::reftype = \&builtin::reftype;
++            *JSON::PP::refaddr = \&builtin::refaddr;
++        }
++        else{
++            # This code is from Scalar::Util.
++            # warn $@;
++            eval 'sub UNIVERSAL::a_sub_not_likely_to_be_here { ref($_[0]) }';
++            *JSON::PP::blessed = sub {
++                local($@, $SIG{__DIE__}, $SIG{__WARN__});
++                ref($_[0]) ? eval { $_[0]->a_sub_not_likely_to_be_here } : undef;
++            };
++            require B;
++            my %tmap = qw(
++                B::NULL   SCALAR
++                B::HV     HASH
++                B::AV     ARRAY
++                B::CV     CODE
++                B::IO     IO
++                B::GV     GLOB
++                B::REGEXP REGEXP
++            );
++            *JSON::PP::reftype = sub {
++                my $r = shift;
++
++                return undef unless length(ref($r));
++
++                my $t = ref(B::svref_2object($r));
++
++                return
++                    exists $tmap{$t} ? $tmap{$t}
++                : length(ref($$r)) ? 'REF'
++                :                    'SCALAR';
++            };
++            *JSON::PP::refaddr = sub {
++            return undef unless length(ref($_[0]));
++
++            my $addr;
++            if(defined(my $pkg = blessed($_[0]))) {
++                $addr .= bless $_[0], 'Scalar::Util::Fake';
++                bless $_[0], $pkg;
++            }
++            else {
++                $addr .= $_[0]
++            }
+ 
+-            return
+-                exists $tmap{$t} ? $tmap{$t}
+-              : length(ref($$r)) ? 'REF'
+-              :                    'SCALAR';
+-        };
+-        *JSON::PP::refaddr = sub {
+-          return undef unless length(ref($_[0]));
+-
+-          my $addr;
+-          if(defined(my $pkg = blessed($_[0]))) {
+-            $addr .= bless $_[0], 'Scalar::Util::Fake';
+-            bless $_[0], $pkg;
+-          }
+-          else {
+-            $addr .= $_[0]
+-          }
+-
+-          $addr =~ /0x(\w+)/;
+-          local $^W;
+-          #no warnings 'portable';
+-          hex($1);
++            $addr =~ /0x(\w+)/;
++            local $^W;
++            #no warnings 'portable';
++            hex($1);
++            }
+         }
+     }
+ }
