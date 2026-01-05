@@ -196,14 +196,12 @@
       else
         super.brotli;
 
-    perlPackages.JSON =
-      if isCross then
-        super.perlPackages.JSON.overrideAttrs (oldAttrs: {
-          patches = (oldAttrs.patches or [ ]) ++ [
-            ./JSON-41-disable-b.patch
-          ];
-        })
-      else
-        super.perlPackages.JSON;
+    perlPackages = super.perlPackages // {
+      JSON = super.perlPackages.JSON.overrideAttrs (oldAttrs: {
+        patches = (oldAttrs.patches or [ ]) ++ (
+          if isCross then [ ./JSON-41-disable-b.patch ] else [ ]
+        );
+      });
+    };
   }
 )
