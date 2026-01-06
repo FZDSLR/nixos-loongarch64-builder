@@ -3,10 +3,12 @@
 
   let
     isCross = super.stdenv.buildPlatform != super.stdenv.hostPlatform;
-    isCrossTarget = super.stdenv.buildPlatform != super.stdenv.targetPlatform;
+    isCrossTarget =
+      super.stdenv.buildPlatform == super.stdenv.hostPlatform
+      && super.stdenv.buildPlatform != super.stdenv.targetPlatform;
   in
   {
-    ubootTools = (
+    ubootTools-la = (
       super.ubootTools.overrideAttrs (
         finalAttrs: previousAttrs: {
           version = "2024.04";
@@ -41,6 +43,8 @@
         }
       )
     );
+
+    ubootTools = if isCrossTarget then self.pkgsBuildBuild.ubootTools-la else self.ubootTools-la;
 
     linuxPackages_6_12_2k300 = super.linuxPackagesFor (
       super.callPackage ../packages/linux-6.12-2k300.nix { }
@@ -197,13 +201,13 @@
         super.brotli;
 
     perl5 = super.perl5.override {
-      overrides = (pkgs: {
-        JSON = super.perl5.pkgs.JSON.overrideAttrs (oldAttrs: {
-          patches = (oldAttrs.patches or [ ]) ++ (
-            if isCross then [ ./JSON-41-disable-b.patch ] else [ ]
-          );
-        });
-      });
+      overrides = (
+        pkgs: {
+          JSON = super.perl5.pkgs.JSON.overrideAttrs (oldAttrs: {
+            patches = (oldAttrs.patches or [ ]) ++ (if isCross then [ ./JSON-41-disable-b.patch ] else [ ]);
+          });
+        }
+      );
     };
   }
 )
