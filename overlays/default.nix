@@ -40,6 +40,7 @@
 
             runHook postInstall
           '';
+          pythonScriptsToInstall = null;
         }
       )
     );
@@ -209,5 +210,30 @@
         }
       );
     };
+
+    python3 = (
+      super.python3.override {
+        packageOverrides = final: prev: {
+          setuptools-rust = prev.setuptools-rust.overrideAttrs (oldAttrs: {
+            setupHooks =
+              if prev.python.pythonOnTargetForTarget == { } then
+                null
+              else
+                super.replaceVars oldAttrs.setupHook.src {
+                  pyLibDir =
+                    if (oldAttrs.setupHook.stdenv.hostPlatform == oldAttrs.setupHook.stdenv.targetPlatform) then
+                      "${prev.python}/lib/${prev.python.libPrefix}"
+                    else
+                      "${prev.python.pythonOnTargetForTarget}/lib/${prev.python.pythonOnTargetForTarget.libPrefix}";
+                  cargoBuildTarget = oldAttrs.setupHook.stdenv.targetPlatform.rust.rustcTargetSpec;
+                  cargoLinkerVar = oldAttrs.setupHook.stdenv.targetPlatform.rust.cargoEnvVarTarget;
+                  targetLinker = "${super.stdenv.cc}/bin/${super.stdenv.cc.targetPrefix}cc";
+                };
+          });
+        };
+      }
+    );
+    python3Packages = self.python3.pkgs;
+
   }
 )
