@@ -1,0 +1,236 @@
+diff --git a/src/build_options.rs b/src/build_options.rs
+index 04dce88..0dc0caa 100644
+--- a/src/build_options.rs
++++ b/src/build_options.rs
+@@ -1549,7 +1549,11 @@ impl CargoOptions {
+                 all_features: self.all_features,
+                 no_default_features: self.no_default_features,
+                 target: if let Some(target) = target_triple {
+-                    vec![target]
++                    if !target.ends_with("json") {
++                        vec![target]
++                    } else {
++                        Vec::new()
++                    }
+                 } else {
+                     Vec::new()
+                 },
+diff --git a/src/compile.rs b/src/compile.rs
+index c574eb8..a7bf1ea 100644
+--- a/src/compile.rs
++++ b/src/compile.rs
+@@ -186,10 +186,11 @@ fn cargo_build_command(
+     }
+ 
+     let target_triple = target.target_triple();
++    let json_path = target.json_path();
+ 
+     let manifest_dir = context.manifest_path.parent().unwrap();
+     let mut rustflags = cargo_config2::Config::load_with_cwd(manifest_dir)?
+-        .rustflags(target_triple)?
++        .rustflags(json_path)?
+         .unwrap_or_default();
+     let original_rustflags = rustflags.flags.clone();
+ 
+@@ -287,20 +288,20 @@ fn cargo_build_command(
+             .extend(["-C".to_string(), "strip=symbols".to_string()]);
+     }
+ 
+-    let mut build_command = if target.is_msvc() && target.cross_compiling() {
++    let mut build_command_original = if target.is_msvc() && target.cross_compiling() {
+         #[cfg(feature = "xwin")]
+         {
+             // Don't use xwin if the Windows MSVC compiler can compile to the target
+             let native_compile = target.host_triple().contains("windows-msvc")
+-                && cc::Build::new()
+-                    .opt_level(0)
+-                    .host(target.host_triple())
+-                    .target(target_triple)
+-                    .cargo_metadata(false)
+-                    .cargo_warnings(false)
+-                    .cargo_output(false)
+-                    .try_get_compiler()
+-                    .is_ok();
++            && cc::Build::new()
++            .opt_level(0)
++            .host(target.host_triple())
++            .target(target_triple)
++            .cargo_metadata(false)
++            .cargo_warnings(false)
++            .cargo_output(false)
++            .try_get_compiler()
++            .is_ok();
+             let force_xwin = env::var("MATURIN_USE_XWIN").ok().as_deref() == Some("1");
+             if !native_compile || force_xwin {
+                 println!("🛠️ Using xwin for cross-compiling to {target_triple}");
+@@ -370,9 +371,9 @@ fn cargo_build_command(
+         // Pass zig command to downstream, eg. python3-dll-a
+         if let Ok((zig_cmd, zig_args)) = cargo_zigbuild::Zig::find_zig() {
+             if zig_args.is_empty() {
+-                build_command.env("ZIG_COMMAND", zig_cmd);
++                build_command_original.env("ZIG_COMMAND", zig_cmd);
+             } else {
+-                build_command.env(
++                build_command_original.env(
+                     "ZIG_COMMAND",
+                     format!("{} {}", zig_cmd.display(), zig_args.join(" ")),
+                 );
+@@ -380,6 +381,37 @@ fn cargo_build_command(
+         }
+     }
+ 
++    let mut build_command = Command::new(build_command_original.get_program());
++
++    let args: Vec<_> = build_command_original.get_args().collect();
++    for arg in args.iter() {
++        if let Some(arg_str) = arg.to_str() {
++            if arg_str == target_triple {
++                build_command.arg(json_path.to_string());
++            } else {
++                build_command.arg(arg);
++            }
++        } else {
++            build_command.arg(arg);
++        }
++    }
++
++
++    for (key, value_opt) in build_command_original.get_envs() {
++        match value_opt {
++            Some(value) => {
++                build_command.env(key, value);
++            }
++            None => {
++                build_command.env_remove(key);
++            }
++        }
++    }
++
++    if let Some(cwd) = build_command_original.get_current_dir() {
++        build_command.current_dir(cwd);
++    }
++
+     build_command
+         // We need to capture the json messages
+         .stdout(Stdio::piped())
+diff --git a/src/target/mod.rs b/src/target/mod.rs
+index 7c6bff3..272a0b3 100644
+--- a/src/target/mod.rs
++++ b/src/target/mod.rs
+@@ -222,6 +222,7 @@ pub struct Target {
+     arch: Arch,
+     env: Environment,
+     triple: String,
++    json_path: String,
+     cross_compiling: bool,
+     /// rustc version information
+     pub(crate) rustc_version: VersionMeta,
+@@ -267,8 +268,83 @@ impl Target {
+         use target_lexicon::{
+             ArmArchitecture, Mips32Architecture, Mips64Architecture, OperatingSystem,
+         };
+-        let platform = Triple::from_str(target_triple)
+-            .map_err(|_| format_err!("Unknown target triple {}", target_triple))?;
++        use std::path::Path;
++        use std::fs;
++
++        // 根据Rust规范，--target只有两种可能：
++        // 1. 以.json结尾的文件路径
++        // 2. 直接的三元组字符串
++        let triple_str = if target_triple.ends_with(".json") {
++            let path = Path::new(target_triple);
++
++            // 验证文件扩展名（确保是.json，不区分大小写）
++            if let Some(ext) = path.extension() {
++                if ext.to_string_lossy().to_lowercase() != "json" {
++                    return Err(format_err!(
++                        "Invalid target specification file extension: {}. Expected .json",
++                        ext.to_string_lossy()
++                    ));
++                }
++            }
++
++            // 检查文件是否存在
++            if !path.exists() {
++                return Err(format_err!("Target specification file not found: {}", target_triple));
++            }
++
++            // 检查是否为文件（不是目录）
++            if !path.is_file() {
++                return Err(format_err!("Target specification path is not a file: {}", target_triple));
++            }
++
++            // 读取JSON文件内容
++            let content = fs::read_to_string(path)
++            .map_err(|e| format_err!("Failed to read target specification file {}: {}", target_triple, e))?;
++
++            // 解析JSON
++            let json_value: serde_json::Value = serde_json::from_str(&content)
++            .map_err(|e| format_err!("Failed to parse JSON from target specification file {}: {}", target_triple, e))?;
++
++            // 提取llvm-target字段并转换为String（拥有所有权）
++            match json_value.get("llvm-target") {
++                Some(llvm_target_value) => {
++                    if let Some(llvm_target_str) = llvm_target_value.as_str() {
++                        if llvm_target_str.trim().is_empty() {
++                            return Err(format_err!(
++                                "Empty 'llvm-target' field in target specification file {}",
++                                target_triple
++                            ));
++                        }
++                        // 转换为String以获得所有权
++                        llvm_target_str.to_string()
++                    } else {
++                        return Err(format_err!(
++                            "Invalid 'llvm-target' field in target specification file {}: expected string, got {}",
++                            target_triple,
++                            llvm_target_value
++                        ));
++                    }
++                }
++                None => {
++                    return Err(format_err!(
++                        "Missing 'llvm-target' field in target specification file {}",
++                        target_triple
++                    ));
++                }
++            }
++        } else {
++            // 不是JSON文件路径，直接作为三元组字符串
++            // 确保不是空字符串
++            if target_triple.trim().is_empty() {
++                return Err(format_err!("Empty target triple string"));
++            }
++            // 转换为String以获得一致的类型
++            target_triple.to_string()
++        };
++
++        // 现在triple_str是String类型，而不是&str
++        let platform = Triple::from_str(&triple_str)
++        .map_err(|_| format_err!("Unknown target triple '{}'", triple_str))?;
+ 
+         let os = match platform.operating_system {
+             OperatingSystem::Linux => Os::Linux,
+@@ -331,7 +407,8 @@ impl Target {
+             os,
+             arch,
+             env: platform.environment,
+-            triple: target_triple.to_string(),
++            triple: triple_str,
++            json_path: target_triple.to_string(),
+             rustc_version,
+             user_specified,
+             cross_compiling: false,
+@@ -540,6 +617,12 @@ impl Target {
+         &self.triple
+     }
+ 
++    /// Returns json_path as string
++    #[inline]
++    pub fn json_path(&self) -> &str {
++        &self.json_path
++    }
++
+     /// Returns host triple as string
+     #[inline]
+     pub fn host_triple(&self) -> &str {

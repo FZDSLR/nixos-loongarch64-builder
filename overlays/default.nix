@@ -235,5 +235,10 @@
     );
     python3Packages = self.python3.pkgs;
 
+    maturin = super.maturin.overrideAttrs (oldAttrs: {
+      patches =
+        (oldAttrs.patches or [ ])
+        ++ (if isCrossTarget then [ ./maturin-custom-target-json.patch ] else [ ]);
+    });
   }
 )
