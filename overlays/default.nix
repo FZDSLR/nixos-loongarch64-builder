@@ -199,16 +199,6 @@
       else
         super.brotli;
 
-    perl5 = super.perl5.override {
-      overrides = (
-        pkgs: {
-          JSON = super.perl5.pkgs.JSON.overrideAttrs (oldAttrs: {
-            patches = (oldAttrs.patches or [ ]) ++ (if isCross then [ ./JSON-41-disable-b.patch ] else [ ]);
-          });
-        }
-      );
-    };
-
     python3 = (
       super.python3.override {
         packageOverrides = final: prev: {
