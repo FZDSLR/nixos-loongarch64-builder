@@ -24,6 +24,5 @@
   };
   nixpkgs.overlays = [
     (import ../overlays/default.nix)
-    (rust-overlay.overlays.default)
   ];
 }
