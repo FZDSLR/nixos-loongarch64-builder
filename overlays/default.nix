@@ -76,28 +76,6 @@
       }).overrideAttrs
         ({ patches = [ ./initrd-support.patch ]; });
 
-    podman = super.podman.override {
-      extraRuntimes = [ ];
-    };
-
-    runc = super.runc.overrideAttrs (
-      finalAttrs: previousAttrs: {
-        version = "1.3.0";
-        src = super.fetchFromGitHub {
-          owner = "opencontainers";
-          repo = "runc";
-          rev = "v${finalAttrs.version}";
-          hash = "sha256-oXoDio3l23Z6UyAhb9oDMo1O4TLBbFyLh9sRWXnfLVY=";
-        };
-        patches = previousAttrs.patches or [ ] ++ [
-          (super.fetchurl {
-            url = "https://gitlab.alpinelinux.org/alpine/aports/-/raw/82e8ff7e79e388c9363b0c0781c04c944a4caacd/community/runc/add-seccomp-for-loongarch64.patch";
-            sha256 = "17krbjkw8lzf9x3h10zw5bpgcgs4ibwadakabrl98nj4vnp5qfqb";
-          })
-        ];
-      }
-    );
-
     haskellPackages-la = super.haskellPackages.override {
       ghc =
         if isCrossTarget then
