@@ -164,19 +164,6 @@
       else
         super.libimagequant;
 
-    brotli =
-      if isCross then
-        super.brotli.overrideAttrs (oldAttrs: {
-          patches = (oldAttrs.patches or [ ]) ++ [
-            (super.fetchurl {
-              url = "https://github.com/google/brotli/commit/e230f474b87134e8c6c85b630084c612057f253e.patch";
-              hash = "sha256-QERl8RHJz7tFr++hZIYwdj1/ogPpjArC+ia8S/bWxKk=";
-            })
-          ];
-        })
-      else
-        super.brotli;
-
     python3 = (
       super.python3.override {
         packageOverrides = final: prev: {
