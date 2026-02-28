@@ -22,7 +22,7 @@ jobs:
 
     steps:
       - name: Maximize build space
-        uses: easimon/maximize-build-space@v10
+        uses: smallprogram/maximize-build-space@16007771e4642069097fc3e7444638474e5db178
         with:
           root-reserve-mb: 24576
           swap-size-mb: 16384
