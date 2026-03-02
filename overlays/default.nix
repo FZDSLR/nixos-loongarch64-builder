@@ -193,5 +193,15 @@
         (oldAttrs.patches or [ ])
         ++ (if isCrossTarget then [ ./maturin-custom-target-json.patch ] else [ ]);
     });
+
+    gnutls =
+      if isCross then
+        super.gnutls.overrideAttrs (prevAttrs: {
+          postPatch = prevAttrs.postPatch + ''
+            touch doc/stamp_error_codes
+          '';
+        })
+      else
+        super.gnutls;
   }
 )
