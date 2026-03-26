@@ -88,31 +88,59 @@
           super.haskellPackages.ghc;
     };
 
+    fish-indent-native = super.rustPlatform.buildRustPackage {
+      pname = "fish-indent-native";
+      version = super.fish.version;
+      src = super.fish.src;
+      cargoDeps = super.fish.cargoDeps;
+      buildPhase = ''
+        runHook preBuild
+        cargo build --bin fish_indent --release
+        runHook postBuild
+      '';
+      installPhase = ''
+        runHook preInstall
+        install -Dm755 target/release/fish_indent $out/bin/fish_indent
+        runHook postInstall
+      '';
+      doCheck = false;
+      strictDeps = true;
+    };
+
     fish = super.fish.overrideAttrs (oldAttrs: {
       cmakeFlags =
-        let
-          # 过滤掉所有形式的 Rust_CARGO_TARGET 标志
-          filteredFlags = builtins.filter (
-            flag:
-            if builtins.isString flag then
-              let
-                # 检查是否以 -DRust_CARGO_TARGET 开头
-                isRustFlag = builtins.substring 0 19 flag == "-DRust_CARGO_TARGET";
-              in
-              !isRustFlag
-            else
-              true
-          ) oldAttrs.cmakeFlags;
+        (
+          let
+            # 过滤掉所有形式的 Rust_CARGO_TARGET 标志
+            filteredFlags = builtins.filter (
+              flag:
+              if builtins.isString flag then
+                let
+                  # 检查是否以 -DRust_CARGO_TARGET 开头
+                  isRustFlag = builtins.substring 0 19 flag == "-DRust_CARGO_TARGET";
+                in
+                !isRustFlag
+              else
+                true
+            ) oldAttrs.cmakeFlags;
 
-          # 生成新的 Rust_CARGO_TARGET 标志
-          newRustFlag = (
-            super.lib.cmakeFeature "Rust_CARGO_TARGET" super.stdenv.hostPlatform.rust.rustcTargetSpec
-          );
-        in
-        filteredFlags ++ [ newRustFlag ];
+            # 生成新的 Rust_CARGO_TARGET 标志
+            newRustFlag = (
+              super.lib.cmakeFeature "Rust_CARGO_TARGET" super.stdenv.hostPlatform.rust.rustcTargetSpec
+            );
+          in
+          filteredFlags ++ [ newRustFlag ]
+        )
+        ++ [
+          "-DFISH_INDENT_FOR_BUILDING_DOCS=${super.buildPackages.fish-indent-native}/bin/fish_indent"
+          "-DSPHINX_EXECUTABLE=${super.buildPackages.sphinx}/bin/sphinx-build"
+        ];
       patches = (oldAttrs.patches or [ ]) ++ [
         ./fish-custom-target-fix.patch
       ];
+      preConfigure = (oldAttrs.preConfigure or "") + ''
+        export RUST_BACKTRACE=1
+      '';
     });
 
     librsvg = super.librsvg.overrideAttrs (oldAttrs: {
