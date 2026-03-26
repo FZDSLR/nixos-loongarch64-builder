@@ -193,5 +193,17 @@
         (oldAttrs.patches or [ ])
         ++ (if isCrossTarget then [ ./maturin-custom-target-json.patch ] else [ ]);
     });
+
+    git =
+      if isCross then
+        super.git.overrideAttrs (oldAttrs: {
+          postPatch = (oldAttrs.postPatch or "") + ''
+            substituteInPlace Makefile \
+              --replace-fail "RUST_TARGET_DIR = target/${super.stdenv.hostPlatform.rust.rustcTargetSpec}/" \
+                            "RUST_TARGET_DIR = target/${super.stdenv.hostPlatform.rust.cargoShortTarget}/"
+          '';
+        })
+      else
+        super.git;
   }
 )
