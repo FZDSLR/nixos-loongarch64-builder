@@ -233,5 +233,16 @@
         })
       else
         super.git;
+
+    node-red = super.node-red.overrideAttrs (oldAttrs: {
+      postPatch =
+        let
+          packageDir = "packages/node_modules/node-red";
+        in
+        ''
+          jq '. += {"bin": {"node-red": "${packageDir}/red.js", "node-red-pi": "${packageDir}/bin/node-red-pi"}}' package.json > package.json.tmp
+          mv package.json.tmp package.json
+        '';
+    });
   }
 )
